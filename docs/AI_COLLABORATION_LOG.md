@@ -4,7 +4,7 @@ Judges use this to verify AI tool usage alongside git `Co-authored-by` trailers.
 
 | Date | Module / phase | Commit (SHA) | AI tools used | Human role |
 |------|----------------|--------------|---------------|------------|
-| 2026-05-20 | Phase 1 scaffold | (see git log) | Cursor, Hermes orchestrator | architecture, review |
+| 2026-05-20 | Phase 1 scaffold | `4c4f665` | Cursor, Hermes orchestrator | architecture, review |
 | | | | | |
 
 ## Rules
