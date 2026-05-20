@@ -28,16 +28,26 @@ cd apps/web && npm install && npm run build
 ./scripts/smoke-scaffold.sh
 ```
 
-## OpenSrc research
-
-Before implementing modules, agents must read source via OpenSrc:
+## Demo
 
 ```bash
-opensrc path viem
-opensrc path zod
+cd apps/web && npm install && npm run build && npm run start
+# another terminal:
+AEGIS_BASE_URL=http://127.0.0.1:3000 ./tests/curl-demo.sh
+cd contracts && forge test
 ```
 
-Assignments: kit parent `docs/research/agent-research-assignments.md`.
+## API routes
+
+| Route | Purpose |
+|-------|---------|
+| `POST /api/rpc` | JSON-RPC passthrough |
+| `POST /api/preflight` | Transaction screening |
+| `GET /api/events` | Audit timeline |
+| `GET /api/adapters/chainlink` | Feed health |
+| `POST /api/ai-memo` | Verdict explanation (no override) |
+| `/dashboard` | OpsRisk UI |
+
 
 ## Orchestration
 

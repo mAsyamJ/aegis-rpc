@@ -1,0 +1,9 @@
+{
+  "default-wallet-policy": {
+    "registry": "deploy with forge script — see contracts/README.md",
+    "demoToken": "deploy with forge script",
+    "demoSpender": "deploy with forge script",
+    "chainlinkFeedConsumer": "deploy with forge script",
+    "note": "Run: cd contracts && forge build && forge test. Deploy when ready with human approval."
+  }
+}
