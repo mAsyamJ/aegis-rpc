@@ -18,7 +18,12 @@ export function getEventByRequestId(requestId: string): AuditEvent | undefined {
 
 export function updateEvent(
   requestId: string,
-  patch: Partial<Pick<AuditEvent, "aiMemo" | "memoStatus">>
+  patch: Partial<
+    Pick<
+      AuditEvent,
+      "aiMemo" | "memoStatus" | "aiAnalysis" | "broadcasted" | "txHash"
+    >
+  >
 ): AuditEvent | undefined {
   const idx = events.findIndex((e) => e.requestId === requestId);
   if (idx === -1) return undefined;

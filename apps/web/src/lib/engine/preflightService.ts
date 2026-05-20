@@ -3,8 +3,8 @@ import { collectAdapterSignals } from "@/lib/adapters";
 import { appendEvent, updateEvent } from "@/lib/db/eventStore";
 import { evaluateTransaction } from "@/lib/engine/policyEngine";
 import { decodeTxIntent } from "@/lib/engine/transactionDecoder";
-import { generateMemoAsync } from "@/lib/ai/memoGenerator";
-import { getPolicy } from "@/lib/policies/default-wallet-policy";
+import { getPolicy, getPolicyHash } from "@/lib/policies";
+import { runMemoService } from "@/lib/ai/memoService";
 import type { AuditEvent, PreflightRequest } from "@/lib/types";
 
 export const preflightSchema = z.object({
@@ -45,15 +45,17 @@ export async function runPreflight(input: PreflightRequest) {
     needsAiAnalysis: verdictResult.needsAiAnalysis,
     broadcasted: false,
     memoStatus: verdictResult.needsAiAnalysis ? "generating" : "pending",
+    onChainPolicyHash: getPolicyHash(policy.id),
     latencyMs: Date.now() - started,
   };
 
   appendEvent(event);
 
   if (verdictResult.needsAiAnalysis || verdictResult.verdict !== "SAFE") {
-    void generateMemoAsync(requestId, event, verdictResult).then((memo) => {
+    void runMemoService(event, verdictResult).then((memo) => {
       updateEvent(requestId, {
-        aiMemo: memo.text,
+        aiMemo: memo.summary,
+        aiAnalysis: memo,
         memoStatus: memo.source === "template" ? "fallback" : "ready",
       });
     });
@@ -72,6 +74,8 @@ export async function runPreflight(input: PreflightRequest) {
       isUnknownSelector: intent.isUnknownSelector,
       isUnlimitedApproval: intent.isUnlimitedApproval,
     },
+    onChainPolicyHash: event.onChainPolicyHash,
+    policyMode: policy.mode,
     latencyMs: event.latencyMs,
   };
 }

@@ -41,7 +41,7 @@ export async function POST(req: Request) {
       jsonrpc: "2.0",
       id,
       error: {
-        code: -32091,
+        code: -32090,
         message: `Aegis intercepts ${method}. Use POST /api/preflight for screening.`,
         data: { method, intercepted: true },
       },

@@ -6,6 +6,10 @@ const PASSTHROUGH_METHODS = new Set([
   "eth_getTransactionCount",
   "eth_estimateGas",
   "eth_getCode",
+  "eth_gasPrice",
+  "eth_maxPriorityFeePerGas",
+  "eth_getTransactionByHash",
+  "eth_getTransactionReceipt",
 ]);
 
 const INTERCEPTED_METHODS = new Set([

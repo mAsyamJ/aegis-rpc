@@ -9,8 +9,8 @@ const aggregatorAbi = parseAbi([
 ]);
 
 const DEFAULT_FEED =
-  "0x4aDC67696Ba383f67Dd721149D36317a7C0E8c10" as `0x${string}`;
-const MAX_STALE_SECONDS = 3600;
+  "0x4aDC67696bA383F43DD60A9e78F2C97Fbbfc7cb1" as `0x${string}`;
+const MAX_STALE_SECONDS = 7200;
 
 export const chainlinkPriceAdapter: AegisAdapter = {
   name: "ChainlinkPriceAdapter",
@@ -66,14 +66,17 @@ export const chainlinkPriceAdapter: AegisAdapter = {
         return {
           adapter: "ChainlinkPriceAdapter",
           status: policy.rules.requireFreshPrice ? "BLOCK" : "WARN",
-          reasonCode: "CHAINLINK_STALE_FEED",
+          reasonCode: "ORACLE_STALE",
           message: `Chainlink feed stale by ${staleSeconds}s`,
           data: { staleSeconds, updatedAt },
           latencyMs: Date.now() - started,
         };
       }
 
-      const maxUsd = policy.limits.maxNativeTransferUsd;
+      const maxUsd =
+        policy.template === "agent"
+          ? policy.limits.maxSingleAgentActionUsd
+          : policy.limits.maxNativeTransferUsd;
       if (
         maxUsd !== undefined &&
         intent.decodedFunction === "native_transfer" &&
@@ -82,8 +85,11 @@ export const chainlinkPriceAdapter: AegisAdapter = {
         return {
           adapter: "ChainlinkPriceAdapter",
           status: "BLOCK",
-          reasonCode: "NATIVE_TRANSFER_ABOVE_USD_LIMIT",
-          message: `Native transfer ~$${valueUsd.toFixed(2)} exceeds limit $${maxUsd}`,
+          reasonCode:
+            policy.template === "agent"
+              ? "AGENT_TX_CAP_EXCEEDED"
+              : "NATIVE_TRANSFER_ABOVE_USD_LIMIT",
+          message: `Transfer ~$${valueUsd.toFixed(2)} exceeds policy limit $${maxUsd}`,
           data: { valueUsd, priceUsd, maxUsd },
           latencyMs: Date.now() - started,
         };

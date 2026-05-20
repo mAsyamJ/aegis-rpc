@@ -1,20 +1,21 @@
 import type { AegisPolicy } from "@/lib/types";
 
-export const defaultWalletPolicy: AegisPolicy = {
-  id: "default-wallet-policy",
-  name: "Default Wallet Policy",
+export const defaultAgentPolicy: AegisPolicy = {
+  id: "default-agent-policy",
+  name: "Default Agent Policy",
   mode: "enforce",
-  template: "wallet",
+  template: "agent",
   chainId: 84532,
   limits: {
-    maxNativeTransferUsd: 1000,
+    maxSingleAgentActionUsd: 500,
+    maxDailyAgentSpendUsd: 5000,
   },
   rules: {
     blockUnlimitedApproval: true,
     requireSpenderAllowlist: true,
     blockUnknownContracts: false,
     requireFreshPrice: false,
-    blockSimulationRevert: false,
+    blockSimulationRevert: true,
     flagUnknownSelectors: true,
   },
   allowlists: {
@@ -22,7 +23,7 @@ export const defaultWalletPolicy: AegisPolicy = {
     recipients: [],
     spenders: [],
     contracts: [],
-    selectors: [],
+    selectors: ["0xa9059cbb", "0x095ea7b3"],
   },
   denylists: {
     addresses: [],

@@ -98,6 +98,17 @@ export type AuditEvent = {
   needsAiAnalysis: boolean;
   broadcasted: boolean;
   aiMemo?: string;
+  aiAnalysis?: {
+    summary: string;
+    risks: string[];
+    suggestion?: string;
+    confidence?: number;
+    model?: string;
+    source: "ai" | "template";
+    preSigningAssist?: { headline: string; bullets: string[] };
+  };
   memoStatus: "pending" | "generating" | "ready" | "fallback";
+  onChainPolicyHash?: string;
+  txHash?: string;
   latencyMs?: number;
 };

@@ -1,5 +1,6 @@
 import { decodeFunctionData, maxUint256 } from "viem";
 import type { PreflightRequest, TxIntent } from "@/lib/types";
+import { classifyUseCase } from "./useCaseClassifier";
 
 const APPROVE_SELECTOR = "0x095ea7b3";
 const TRANSFER_SELECTOR = "0xa9059cbb";
@@ -60,6 +61,8 @@ export function decodeTxIntent(
     calldataLength: data === "0x" ? 0 : (data.length - 2) / 2,
     useCase: "wallet",
   };
+
+  intent.useCase = classifyUseCase(intent);
 
   if (!intent.data || intent.data === "0x") {
     intent.decodedFunction = "native_transfer";
