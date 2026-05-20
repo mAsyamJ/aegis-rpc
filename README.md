@@ -31,21 +31,28 @@ cd apps/web && npm install && npm run build
 ## Demo
 
 ```bash
-cd apps/web && npm install && npm run build && npm run start
-# another terminal:
-AEGIS_BASE_URL=http://127.0.0.1:3000 ./tests/curl-demo.sh
+cd apps/web && npm install && npm run build && npm run start -- --port 3020
+AEGIS_BASE_URL=http://127.0.0.1:3020 ./tests/curl-demo.sh
 cd contracts && forge test
 ```
+
+Open `/demo/agent` (LEAD), `/demo/wallet`, `/dashboard`.
+
+Optional offline UI: `NEXT_PUBLIC_AEGIS_FIXTURES=true npm run dev`
 
 ## API routes
 
 | Route | Purpose |
 |-------|---------|
-| `POST /api/rpc` | JSON-RPC passthrough |
+| `POST /api/rpc` | JSON-RPC passthrough + intercept `-32090` |
 | `POST /api/preflight` | Transaction screening |
+| `POST /api/safe-send` | Broadcast after SAFE/WARN override |
+| `GET/POST/PUT /api/policies` | Policy registry (in-memory MVP) |
+| `GET /api/ai-analyze?requestId=` | AI memo + pre-signing assist |
 | `GET /api/events` | Audit timeline |
 | `GET /api/adapters/chainlink` | Feed health |
-| `POST /api/ai-memo` | Verdict explanation (no override) |
+| `/demo/agent` | LEAD agent preflight demo |
+| `/demo/wallet` | Wallet approval firewall |
 | `/dashboard` | OpsRisk UI |
 
 

@@ -36,7 +36,7 @@
 | 6 | Chainlink/mock adapter | `feat: chainlink adapter` | [x] | adapter |
 | 7 | RiskOps dashboard | `feat: riskops dashboard` | [x] | frontend |
 | 8 | AI memo panel | `feat: ai memo panel` | [x] | ai-memo |
-| 9 | Base Sepolia proof | `chore: base sepolia demo` | [x] | smart-contract + qa |
+| 9 | Base Sepolia proof | `chore: base sepolia demo` | [x] deploy pending approval | smart-contract + qa |
 
 ## AI collaboration proof
 
