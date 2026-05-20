@@ -6,8 +6,8 @@ Judges use this to verify AI tool usage alongside git `Co-authored-by` trailers.
 |------|----------------|--------------|---------------|------------|
 | 2026-05-20 | Phase 1 scaffold | `4c4f665` | Cursor, Hermes orchestrator | architecture, review |
 | 2026-05-20 | Phase 2 MVP modules 1–9 | `8a2a48d` | Cursor agent | review, approval |
-| 2026-05-20 | Phase 2B Waves A–D (full spec) | *(pending commit)* | Cursor Composer | orchestration, review |
-| 2026-05-20 | Phase 2C sentinel UI + LEAD demo | *(pending commit)* | Cursor Composer | UI wiring, calldata fix, review |
+| 2026-05-20 | Phase 2B Waves A–D (full spec) | `41a156f`, `fbbf2fe` | Cursor Composer | orchestration, review |
+| 2026-05-20 | Phase 2C sentinel UI + LEAD demo | `0d2f26e`, `f19f5be` | Cursor Composer | UI wiring, calldata fix, review |
 
 ## Phase 2C modules landed
 
