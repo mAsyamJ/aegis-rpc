@@ -5,7 +5,7 @@ Judges use this to verify AI tool usage alongside git `Co-authored-by` trailers.
 | Date | Module / phase | Commit (SHA) | AI tools used | Human role |
 |------|----------------|--------------|---------------|------------|
 | 2026-05-20 | Phase 1 scaffold | `4c4f665` | Cursor, Hermes orchestrator | architecture, review |
-| 2026-05-20 | Phase 2 MVP modules 1–9 | (see git log) | Cursor agent | review, approval |
+| 2026-05-20 | Phase 2 MVP modules 1–9 | `8a2a48d` | Cursor agent | review, approval |
 
 ## Phase 2 modules landed
 
