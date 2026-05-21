@@ -1,5 +1,7 @@
 # Aegis RPC
 
+<img width="1774" height="887" alt="ChatGPT Image 21 Mei 2026, 10 43 02" src="https://github.com/user-attachments/assets/74272257-e246-4942-895a-f83ac6a7d00b" />
+
 Programmable pre-broadcast transaction screening for Base Sepolia (and the same pattern on other EVM chains).
 
 Aegis is a JSON-RPC-shaped gateway and preflight API for wallets, agents, keepers, and backends: read-only calls pass through; risky sends are decoded, checked against deterministic policy plus adapter signals, and return `SAFE`, `WARN`, or `BLOCK` before broadcast.
@@ -12,7 +14,7 @@ Aegis is a JSON-RPC-shaped gateway and preflight API for wallets, agents, keeper
 |----------|-----|
 | Live app (Vercel) | `https://web-gamma-bay-96.vercel.app` |
 | Base Sepolia policy registry | [0xdd59…5011 on Basescan](https://sepolia.basescan.org/address/0xdd59bC2E7Ea61E689d16514428DD618cFB825011#code) |
-| Demo video | `<VIDEO_LINK>` |
+| Demo video | `https://www.youtube.com/watch?v=Heo4iv_3Xas` |
 
 ## Judge quick test (~2 min)
 
