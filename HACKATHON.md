@@ -11,7 +11,7 @@
 | Team | |
 | Track | SEABW |
 | Repo | aegis-rpc/ |
-| Demo URL | Local: `npm run start -- --port 3020`. Production: `vercel --prod` from `apps/web` (see `docs/LOCAL_DEV.md`, `./scripts/deploy-vercel-public.sh`); smoke `AEGIS_PROD_URL=… ./tests/curl-production-smoke.sh`. Public RPC: `https://<domain>/api/rpc` (chain 84532). |
+| Demo URL | **Production:** [https://web-gamma-bay-96.vercel.app](https://web-gamma-bay-96.vercel.app) · `/demo/live` · RPC `https://web-gamma-bay-96.vercel.app/api/rpc` (84532). **Judge smoke:** `AEGIS_BASE_URL=https://web-gamma-bay-96.vercel.app ./tests/curl-judge-preflight-only.sh`. Local: `npm run start -- --port 3020`. Deploy: `docs/LOCAL_DEV.md`, `./scripts/deploy-vercel-public.sh`. |
 | Video | |
 
 ## Lifecycle checklist
@@ -21,7 +21,7 @@
 - [x] **Phase 2** — MVP modules 1–9 (one commit each; see below)
 - [x] **Phase 3** — Technical plan (`/plan` or Kiro orchestrator)
 - [x] **Phase 4** — Grill me (judge Q&A; `docs/GRILL_QA.md`)
-- [ ] **Phase 5** — Production deploy (Vercel; code ready — set env + `vercel --prod` from `apps/web`; Supabase migration `001_aegis_events.sql`)
+- [x] **Phase 5** — Production deploy (Vercel 2026-05-21 — `web-gamma-bay-96.vercel.app`; Supabase optional follow-up: `001_aegis_events.sql` + env sync)
 - [ ] **Phase 6** — Push / submit (approval required)
 
 ## MVP modules (one commit per row)

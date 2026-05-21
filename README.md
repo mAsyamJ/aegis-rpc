@@ -10,7 +10,7 @@ Aegis is a JSON-RPC-shaped gateway and preflight API for wallets, agents, keeper
 
 | Artifact | URL |
 |----------|-----|
-| Live app (Vercel) | `<VERCEL_URL>` |
+| Live app (Vercel) | `https://web-gamma-bay-96.vercel.app` |
 | Base Sepolia policy registry | [0xdd59…5011 on Basescan](https://sepolia.basescan.org/address/0xdd59bC2E7Ea61E689d16514428DD618cFB825011#code) |
 | Demo video | `<VIDEO_LINK>` |
 
@@ -22,7 +22,7 @@ Aegis is a JSON-RPC-shaped gateway and preflight API for wallets, agents, keeper
 
 | Use | URL |
 |-----|-----|
-| **JSON-RPC** (wallet / `cast` / agents) | `https://<VERCEL_URL>/api/rpc` or `http://127.0.0.1:3020/api/rpc` |
+| **JSON-RPC** (wallet / `cast` / agents) | `https://web-gamma-bay-96.vercel.app/api/rpc` or `http://127.0.0.1:3020/api/rpc` |
 | **Preflight** | `…/api/preflight` |
 | **Audit log** | `…/api/events` |
 | **Health** | `…/api/health` |
@@ -34,7 +34,7 @@ Wallet custom RPC: paste the **JSON-RPC** URL above (same chain). Unsigned sends
 **RPC smoke (read passthrough):**
 
 ```bash
-curl -s https://<VERCEL_URL>/api/rpc \
+curl -s https://web-gamma-bay-96.vercel.app/api/rpc \
   -H 'Content-Type: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"eth_blockNumber","params":[]}'
 ```
@@ -46,8 +46,8 @@ Runs three real preflights against deployed Base Sepolia contracts, then you can
 **Production** (replace with your Vercel origin):
 
 ```bash
-AEGIS_BASE_URL=https://<VERCEL_URL> ./tests/curl-live-three-tx.sh
-curl -s "https://<VERCEL_URL>/api/events?limit=5" | jq .
+AEGIS_BASE_URL=https://web-gamma-bay-96.vercel.app ./tests/curl-live-three-tx.sh
+curl -s "https://web-gamma-bay-96.vercel.app/api/events?limit=5" | jq .
 ```
 
 **Local** (after `npm run start -- --port 3020` in `apps/web`):
@@ -119,7 +119,7 @@ More smokes: `./tests/curl-demo.sh`, `./tests/curl-abi-index.sh`, `forge test` i
 
 UI: `/demo/agent`, `/demo/wallet`, `/policies`. Do **not** set `NEXT_PUBLIC_AEGIS_FIXTURES` for live screening.
 
-**Deploy + production smoke:** [`docs/LOCAL_DEV.md`](docs/LOCAL_DEV.md) · `AEGIS_PROD_URL=https://<VERCEL_URL> ./tests/curl-production-smoke.sh`
+**Deploy + production smoke:** [`docs/LOCAL_DEV.md`](docs/LOCAL_DEV.md) · `AEGIS_PROD_URL=https://web-gamma-bay-96.vercel.app ./tests/curl-production-smoke.sh`
 
 ## Architecture (high level)
 
