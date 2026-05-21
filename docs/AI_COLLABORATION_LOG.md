@@ -4,6 +4,7 @@ Judges use this to verify AI tool usage alongside git `Co-authored-by` trailers.
 
 | Date | Module / phase | Commit (SHA) | AI tools used | Human role |
 |------|----------------|--------------|---------------|------------|
+| 2026-05-21 | Judge terminal guide — README 20 curls, `curl-judge-terminal.sh`, HACKATHON; merged remote README banner/video | `75b8d63` | Hermes, Kiro, Cursor | docs, review |
 | 2026-05-21 | Phase 5 production deploy — Vercel types fix (`policy-types.ts`), judge README/HACKATHON URLs, `curl-judge-preflight-only.sh` | `26b468f` | Hermes, Kiro, Cursor | deploy, review, approval |
 | 2026-05-21 | Phase 4 orchestration continuity — board shows **t_a6c35888** + **t_f85e6781** **done**; `docs/GRILL_QA.md` + demo-script anchors OK; `hermes kanban dispatch` spawned **0**; orchestrator **comment** on **t_a6c35888**; ORCHESTRATOR pulse line | (no code commit unless committed separately) | Cursor Agent (`cursor-composer-2` bridge), `hermes kanban` | orchestration |
 | 2026-05-20 | Ship-path orchestration pulse — Kanban dispatch no-op (`ready`=0); forge 5/5, Next build OK, curl-demo OK @ `:3000`; orchestrator comments on **t_f488017b** (Phase 5) + **t_40bcee10** (Phase 6: `gh` missing); ORCHESTRATOR.md pulse paragraph | (no code commit unless committed separately) | Cursor Agent, `hermes kanban` | orchestration |

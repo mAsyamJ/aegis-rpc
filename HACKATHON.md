@@ -11,7 +11,7 @@
 | Team | |
 | Track | SEABW |
 | Repo | aegis-rpc/ |
-| Demo URL | **Production:** [https://web-gamma-bay-96.vercel.app](https://web-gamma-bay-96.vercel.app) · `/demo/live` · RPC `https://web-gamma-bay-96.vercel.app/api/rpc` (84532). **Judge smoke:** `AEGIS_BASE_URL=https://web-gamma-bay-96.vercel.app ./tests/curl-judge-preflight-only.sh`. Local: `npm run start -- --port 3020`. Deploy: `docs/LOCAL_DEV.md`, `./scripts/deploy-vercel-public.sh`. |
+| Demo URL | **Production:** [https://web-gamma-bay-96.vercel.app](https://web-gamma-bay-96.vercel.app) · `/demo/live` · RPC `…/api/rpc` (84532). **Judge terminal:** `AEGIS_BASE_URL=https://web-gamma-bay-96.vercel.app ./tests/curl-judge-terminal.sh` (full tour) or `./tests/curl-judge-preflight-only.sh` (3 verdicts). Curls: [README.md](README.md#judge-terminal-test-guide). Local: `npm run start -- --port 3020`. Deploy: `docs/LOCAL_DEV.md`, `./scripts/deploy-vercel-public.sh`. |
 | Video | |
 
 ## Lifecycle checklist
