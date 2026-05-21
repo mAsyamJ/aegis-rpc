@@ -12,9 +12,9 @@ Aegis is a JSON-RPC-shaped gateway and preflight API for wallets, agents, keeper
 
 | Artifact | URL |
 |----------|-----|
-| Live app (Vercel) | `https://web-gamma-bay-96.vercel.app` |
+| Live app (Vercel) | https://web-gamma-bay-96.vercel.app |
 | Base Sepolia policy registry | [0xdd59…5011 on Basescan](https://sepolia.basescan.org/address/0xdd59bC2E7Ea61E689d16514428DD618cFB825011#code) |
-| Demo video | `https://www.youtube.com/watch?v=Heo4iv_3Xas` |
+| Demo video | https://www.youtube.com/watch?v=Heo4iv_3Xas |
 
 ## Judge quick test (~2 min)
 
