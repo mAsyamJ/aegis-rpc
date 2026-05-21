@@ -1,6 +1,18 @@
 import type { AiAnalysisResult } from "./types";
 
 export const FALLBACK_MEMOS: Record<string, Omit<AiAnalysisResult, "source">> = {
+  HIGH_ALLOWANCE: {
+    summary:
+      "Approve amount exceeds the high-allowance threshold but is not unlimited. Policy returned WARN — review spender and amount before signing.",
+    risks: [
+      "Large finite allowance can still enable significant token movement",
+      "Spender is not on the policy allowlist",
+    ],
+    suggestion: "Approve only the exact amount needed for the next transaction.",
+    confidence: 0.88,
+    model: "aegis-template",
+    role: "WarnContextSynthesizer",
+  },
   UNLIMITED_APPROVAL_UNKNOWN_SPENDER: {
     summary:
       "Aegis blocked an unlimited ERC20 approval to a spender not on the policy allowlist — a common wallet-drainer pattern.",

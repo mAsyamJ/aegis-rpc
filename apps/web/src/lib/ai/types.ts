@@ -15,6 +15,11 @@ export type AiAnalysisResult = {
 };
 
 export type MemoServiceResult = AiAnalysisResult & {
+  unknownSelectorGuess?: string;
+  unknownSelectorConfidence?: string;
+  riskSummary?: string;
+  primaryConcern?: string;
+  generatedAt?: string;
   preSigningAssist?: {
     headline: string;
     bullets: string[];

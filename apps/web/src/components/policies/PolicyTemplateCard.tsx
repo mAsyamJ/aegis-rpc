@@ -1,6 +1,7 @@
 import type { AegisPolicy } from "@/lib/types/aegis";
 import { cn } from "@/lib/utils";
 import { PolicyModeBadge } from "@/components/status/PolicyModeBadge";
+import { CheckCircle2, AlertTriangle } from "lucide-react";
 import { Bot, Wallet, Boxes, Building2, Cpu } from "lucide-react";
 import { relativeTime } from "@/lib/utils/format";
 
@@ -60,9 +61,24 @@ export function PolicyTemplateCard({
         ))}
       </div>
 
-      <div className="mt-3 flex items-center justify-between border-t border-border pt-2.5 text-[10px] text-muted-foreground">
-        <span className="font-mono">{policy.policyHash}</span>
-        <span>updated {relativeTime(policy.updatedAt)}</span>
+      <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border pt-2.5 text-[10px]">
+        {policy.onChainVerified === true ? (
+          <span className="inline-flex items-center gap-1 rounded-md bg-safe/10 px-1.5 py-0.5 text-safe ring-1 ring-safe/30">
+            <CheckCircle2 className="h-3 w-3" />
+            On-chain verified
+          </span>
+        ) : policy.onChainHash ? (
+          <span className="inline-flex items-center gap-1 rounded-md bg-warn/10 px-1.5 py-0.5 text-warn ring-1 ring-warn/30">
+            <AlertTriangle className="h-3 w-3" />
+            Registry drift
+          </span>
+        ) : (
+          <span className="text-muted-foreground">Registry: not read</span>
+        )}
+        <span className="font-mono text-muted-foreground">{policy.policyHash}</span>
+        <span className="ml-auto text-muted-foreground">
+          updated {relativeTime(policy.updatedAt)}
+        </span>
       </div>
     </div>
   );

@@ -83,6 +83,24 @@ flowchart TD
     L --> M[Registry deploy]
 ```
 
+## Plan.md and Kanban wave sequencing
+
+Authoritative long-form narrative lives in the kit repo `../plan.md` (sections 18–19: 24-hour build schedule and agent-swarm operating model; sections 25–26: final cut list and judge-facing demo recommendation). This file stays the **in-repo execution spine**: vertical slices above, dependency graph, and checkpoints map 1:1 to those sections without duplicating the full masterplan.
+
+### Phase 3 checkpoint (2026-05-21) — scope freeze
+
+Aligned with kit `plan.md` **§25 Final Cut List** (cuts: raw send parser depth, universal DeFi router, RWA settlement, private relay, multi-chain, exploit-AI overclaim) and **§26 Final Recommendation** (must-not-cut: verdicts, approval blocker, Chainlink adapter signal, dashboard log, deterministic-policy disclaimer). Matches **Hard scope limits** in this file.
+
+**Open gaps (post-freeze, not MVP re-scope):** **Phase 4** grill — **done** (`docs/GRILL_QA.md`, Kanban **t_a6c35888** + security child **t_f85e6781**). **Phase 4 continuity (2026-05-21):** orchestrator re-verified GRILL_QA vs kit `docs/15-demo-script.md` mapping; `hermes kanban` **ready/running** **0**; **dispatch** spawned **0**; audit **comment** on **t_a6c35888**. **Regression** — **done** (**t_3fbe7d2a**: forge 5/5, `apps/web` build, `curl-demo.sh` @ local :3000). **Phase 5** Vercel — **blocked** (**t_f488017b**) until operator links project, sets env, deploys, pastes production URL in `HACKATHON.md`. **Phase 6** — **blocked** (**t_40bcee10**) until **`gh`** is installed/authenticated where workers run + PR checks + allowlisted push/merge per `DECISIONS.md` (or operator waiver). **Last orchestration pulse (automated gate):** `hermes kanban` **ready/running** both **0**; **`hermes kanban dispatch --max 2`** → spawned **0**; **forge test** **5/5**; **`npm run build`** (`apps/web`) **green**; **`./tests/curl-demo.sh`** with **`AEGIS_BASE_URL=http://127.0.0.1:3000`** **OK**. **Module 9** row still `deploy pending approval` until D3 verify on Base Sepolia per `DECISIONS.md`. Kanban handoff matrix: `.hermes/plans/2026-05-21_001200-orchestrate-plan-md-all-agents-handoff-pabti.md`.
+
+**Kanban parents (do not confuse):**
+
+- **Ship path (HACKATHON Phase 3–6, 2026-05-21):** flat tasks (archived mis-blocked epic **t_79e30cc9** — do not resurrect): **t_3f230e76** (Phase 3 technical plan / scope freeze, `aegis-orchestrator`), **t_a6c35888** (Phase 4 grill + judge Q&A, `aegis-pitch`), **t_f488017b** (Phase 5 Vercel, `aegis-devops`), **t_40bcee10** (Phase 6 PR green + submit, `aegis-qa`), **t_3fbe7d2a** (Regression smoke, `aegis-qa`). Workspace `dir:.../aegis-rpc`. Headless: kit `scripts/install-aegis-pm-cron-10m.sh` + optional `scripts/install-aegis-kanban-dispatch-timer.sh`.
+- **Completed PABTI / plan.md handoff wave (2026-05):** epic **t_e69aadd4** and its children — **done**; use for history only.
+- **Historical Phase 2B Cursor wave:** parent **t_1249ee6d** and wave task IDs **t_847a1d9f** … **t_f0788160** — complete; bodies may still cite `t_1249ee6d`. Workers follow card scope and file paths, not stale parent prose.
+
+**Dispatch cadence:** `hermes kanban dispatch --max 2` (per kit headless runbook). Prefer foundation lanes (RPC + decoder + policy) before adapter/database, then AI memo, frontend, contracts/QA — parallelize only where `DECISIONS.md` and card dependencies allow.
+
 ## Work allocation for agent swarm
 
 | Agent | First task | Hard acceptance |

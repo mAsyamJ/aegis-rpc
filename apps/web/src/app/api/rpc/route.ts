@@ -1,70 +1,65 @@
 import { NextResponse } from "next/server";
 import {
-  forwardRpcCall,
-  isInterceptedMethod,
-  isPassthroughMethod,
-} from "@/lib/rpc/client";
+  corsPreflightResponse,
+  corsHeaders,
+  withCors,
+} from "@/lib/http/cors";
+import {
+  isPublicApiEnabled,
+  publicApiDisabledResponse,
+} from "@/lib/http/publicApiGuard";
+import {
+  handleJsonRpcBody,
+  isBatchRequest,
+} from "@/lib/rpc/engine";
+import { parseError } from "@/lib/rpc/middleware/errorShape";
+import type { JsonRpcResponse } from "@/lib/rpc/middleware/types";
 
-type JsonRpcRequest = {
-  jsonrpc?: string;
-  id?: string | number | null;
-  method?: string;
-  params?: unknown[];
-};
+export async function OPTIONS() {
+  return corsPreflightResponse();
+}
+
+function cacheHeaderFromResponse(res: JsonRpcResponse): string | undefined {
+  const hit = (res as { _aegisCacheHit?: boolean })._aegisCacheHit;
+  if (hit === undefined) return undefined;
+  return hit ? "HIT" : "MISS";
+}
+
+function toNextResponse(
+  body: JsonRpcResponse | JsonRpcResponse[],
+  status = 200
+): NextResponse {
+  const base = corsHeaders();
+  if (Array.isArray(body)) {
+    return NextResponse.json(body, { status, headers: base });
+  }
+  const cache = cacheHeaderFromResponse(body);
+  const headers = cache
+    ? { ...base, "X-Aegis-Cache": cache }
+    : base;
+  const { _aegisCacheHit: _, ...json } = body as JsonRpcResponse & {
+    _aegisCacheHit?: boolean;
+  };
+  return NextResponse.json(json, { status, headers });
+}
 
 export async function POST(req: Request) {
-  let body: JsonRpcRequest;
+  if (!isPublicApiEnabled()) {
+    return publicApiDisabledResponse();
+  }
+
+  let raw: unknown;
   try {
-    body = (await req.json()) as JsonRpcRequest;
+    raw = await req.json();
   } catch {
-    return NextResponse.json(
-      {
-        jsonrpc: "2.0",
-        id: null,
-        error: { code: -32700, message: "Parse error" },
-      },
-      { status: 400 }
-    );
+    return withCors(toNextResponse(parseError(null), 400));
   }
 
-  const { method, params = [], id = null } = body;
-  if (!method) {
-    return NextResponse.json({
-      jsonrpc: "2.0",
-      id,
-      error: { code: -32600, message: "Invalid Request" },
-    });
-  }
+  const url = new URL(req.url);
+  const policyId = url.searchParams.get("policyId") ?? undefined;
 
-  if (isInterceptedMethod(method)) {
-    return NextResponse.json({
-      jsonrpc: "2.0",
-      id,
-      error: {
-        code: -32090,
-        message: `Aegis intercepts ${method}. Use POST /api/preflight for screening.`,
-        data: { method, intercepted: true },
-      },
-    });
-  }
-
-  if (!isPassthroughMethod(method)) {
-    return NextResponse.json({
-      jsonrpc: "2.0",
-      id,
-      error: { code: -32601, message: "Method not supported" },
-    });
-  }
-
-  try {
-    const result = await forwardRpcCall(method, params);
-    return NextResponse.json({ jsonrpc: "2.0", id, result });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "RPC error";
-    return NextResponse.json({
-      jsonrpc: "2.0",
-      id,
-      error: { code: -32603, message },
-    });
-  }
+  const result = await handleJsonRpcBody(raw, policyId ?? undefined);
+  return withCors(toNextResponse(result));
 }
+
+export { isBatchRequest };

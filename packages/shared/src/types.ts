@@ -30,6 +30,12 @@ export type AegisPolicy = {
     requireFreshPrice: boolean;
     blockSimulationRevert: boolean;
     flagUnknownSelectors: boolean;
+    /** WARN when approve amount exceeds highAllowanceWei (wallet-guard pattern). */
+    warnHighAllowance?: boolean;
+    /** BLOCK/WARN on denylisted spenders and composite high-risk approve. */
+    warnHighRiskSpender?: boolean;
+    /** Require treasury inner targets on contract allowlist. */
+    requireTreasuryTargetAllowlist?: boolean;
   };
   allowlists: {
     agents: `0x${string}`[];
@@ -42,6 +48,13 @@ export type AegisPolicy = {
     addresses: `0x${string}`[];
     selectors: string[];
   };
+};
+
+export type InnerCallSummary = {
+  selector?: string;
+  decodedFunction?: string;
+  isUnlimitedApproval?: boolean;
+  isUnknownSelector: boolean;
 };
 
 export type TxIntent = {
@@ -60,6 +73,16 @@ export type TxIntent = {
   isUnknownSelector: boolean;
   calldataLength: number;
   isUnlimitedApproval?: boolean;
+  /** Multicall inner payloads (Rabby-style unwrap). */
+  innerCalls?: InnerCallSummary[];
+  /** Safe execTransaction inner target. */
+  safeInner?: {
+    to?: `0x${string}`;
+    valueWei: bigint;
+    data: `0x${string}`;
+  };
+  /** True when any inner call is unlimited approve. */
+  hasMulticallInnerRisk?: boolean;
 };
 
 export type PreflightRequest = {
@@ -69,6 +92,8 @@ export type PreflightRequest = {
   valueWei?: string;
   data?: string;
   policyId?: string;
+  /** Stored on audit event for optional safe-send broadcast replay. */
+  serializedTransaction?: string;
 };
 
 export type VerdictResult = {
@@ -89,6 +114,8 @@ export type AuditEvent = {
   selector?: string;
   decodedFunction?: string;
   decodedArgs?: Record<string, unknown>;
+  /** Hex calldata prefix for AI memo prompts only (no secrets). */
+  calldataPreview?: string;
   useCase?: string;
   isUnknownSelector: boolean;
   policyId?: string;
@@ -104,11 +131,22 @@ export type AuditEvent = {
     suggestion?: string;
     confidence?: number;
     model?: string;
+    role?: string;
     source: "ai" | "template";
+    unknownSelectorGuess?: string;
+    unknownSelectorConfidence?: string;
+    riskSummary?: string;
+    primaryConcern?: string;
     preSigningAssist?: { headline: string; bullets: string[] };
   };
   memoStatus: "pending" | "generating" | "ready" | "fallback";
   onChainPolicyHash?: string;
   txHash?: string;
+  serializedTransaction?: string;
+  unknownSelectorGuess?: string;
+  riskSummary?: string;
+  primaryConcern?: string;
+  aiGeneratedAt?: string;
+  aiConfidence?: string;
   latencyMs?: number;
 };

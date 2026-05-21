@@ -1,81 +1,84 @@
 import { z } from "zod";
-import { collectAdapterSignals } from "@/lib/adapters";
-import { appendEvent, updateEvent } from "@/lib/db/eventStore";
-import { evaluateTransaction } from "@/lib/engine/policyEngine";
-import { decodeTxIntent } from "@/lib/engine/transactionDecoder";
-import { getPolicy, getPolicyHash } from "@/lib/policies";
-import { runMemoService } from "@/lib/ai/memoService";
-import type { AuditEvent, PreflightRequest } from "@/lib/types";
+import { parseTransaction, type Hex } from "viem";
+import { runScreening } from "@/lib/engine/screeningPipeline";
+import type { PreflightRequest } from "@/lib/types";
 
-export const preflightSchema = z.object({
-  chainId: z.number().int().positive(),
-  from: z.string().regex(/^0x[a-fA-F0-9]{40}$/).optional(),
-  to: z.string().regex(/^0x[a-fA-F0-9]{40}$/).optional(),
-  valueWei: z.string().optional(),
-  data: z.string().regex(/^0x[a-fA-F0-9]*$/).optional(),
-  policyId: z.string().optional(),
-});
+const address = z.string().regex(/^0x[a-fA-F0-9]{40}$/);
 
-export async function runPreflight(input: PreflightRequest) {
-  const started = Date.now();
-  const requestId = `req_${Date.now().toString(36)}`;
-  const intent = decodeTxIntent(input, requestId);
-  const policy = getPolicy(input.policyId);
-  const signals = await collectAdapterSignals(intent, policy);
-  const verdictResult = evaluateTransaction(intent, signals, policy);
-
-  const event: AuditEvent = {
-    id: `evt_${requestId}`,
-    requestId,
-    createdAt: new Date().toISOString(),
-    chainId: intent.chainId,
-    method: intent.method,
-    fromAddress: intent.from,
-    toAddress: intent.to,
-    valueWei: intent.valueWei.toString(),
-    selector: intent.selector,
-    decodedFunction: intent.decodedFunction,
-    decodedArgs: intent.decodedArgs,
-    useCase: intent.useCase,
-    isUnknownSelector: intent.isUnknownSelector,
-    policyId: policy.id,
-    verdict: verdictResult.verdict,
-    reasonCode: verdictResult.reasonCode,
-    signals,
-    needsAiAnalysis: verdictResult.needsAiAnalysis,
-    broadcasted: false,
-    memoStatus: verdictResult.needsAiAnalysis ? "generating" : "pending",
-    onChainPolicyHash: getPolicyHash(policy.id),
-    latencyMs: Date.now() - started,
-  };
-
-  appendEvent(event);
-
-  if (verdictResult.needsAiAnalysis || verdictResult.verdict !== "SAFE") {
-    void runMemoService(event, verdictResult).then((memo) => {
-      updateEvent(requestId, {
-        aiMemo: memo.summary,
-        aiAnalysis: memo,
-        memoStatus: memo.source === "template" ? "fallback" : "ready",
+export const preflightSchema = z
+  .object({
+    serializedTransaction: z
+      .string()
+      .regex(/^0x[0-9a-fA-F]+$/)
+      .optional(),
+    chainId: z.number().int().positive().optional(),
+    from: address.optional(),
+    to: address.optional(),
+    valueWei: z.string().optional(),
+    data: z.string().regex(/^0x[a-fA-F0-9]*$/).optional(),
+    policyId: z.string().optional(),
+  })
+  .superRefine((val, ctx) => {
+    if (val.serializedTransaction) return;
+    if (val.chainId === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "chainId is required when serializedTransaction is omitted",
+        path: ["chainId"],
       });
-    });
+    }
+  });
+
+export type PreflightWireBody = z.infer<typeof preflightSchema>;
+
+/** Expands optional `serializedTransaction` (viem parseTransaction) into a PreflightRequest. */
+export function toPreflightRequest(body: PreflightWireBody): PreflightRequest {
+  if (!body.serializedTransaction) {
+    return {
+      chainId: body.chainId!,
+      from: body.from,
+      to: body.to,
+      valueWei: body.valueWei,
+      data: body.data,
+      policyId: body.policyId,
+    };
   }
 
+  let parsed: ReturnType<typeof parseTransaction>;
+  try {
+    parsed = parseTransaction(body.serializedTransaction as Hex);
+  } catch {
+    throw new Error("Invalid serializedTransaction");
+  }
+
+  if (parsed.chainId === undefined) {
+    throw new Error("serializedTransaction must include chainId (EIP-155)");
+  }
+
+  const value =
+    "value" in parsed && parsed.value !== undefined
+      ? parsed.value.toString()
+      : body.valueWei ?? "0";
+  const data =
+    "data" in parsed && parsed.data !== undefined && parsed.data !== "0x"
+      ? parsed.data
+      : body.data ?? "0x";
+  const toAddr =
+    "to" in parsed && parsed.to !== undefined && parsed.to !== null
+      ? (parsed.to as string)
+      : body.to;
+
   return {
-    requestId,
-    verdict: verdictResult.verdict,
-    reasonCode: verdictResult.reasonCode,
-    signals,
-    memoStatus: event.memoStatus,
-    broadcasted: false,
-    intent: {
-      decodedFunction: intent.decodedFunction,
-      decodedArgs: intent.decodedArgs,
-      isUnknownSelector: intent.isUnknownSelector,
-      isUnlimitedApproval: intent.isUnlimitedApproval,
-    },
-    onChainPolicyHash: event.onChainPolicyHash,
-    policyMode: policy.mode,
-    latencyMs: event.latencyMs,
+    chainId: Number(parsed.chainId),
+    from: body.from,
+    to: toAddr,
+    valueWei: value,
+    data,
+    policyId: body.policyId,
+    serializedTransaction: body.serializedTransaction,
   };
+}
+
+export async function runPreflight(input: PreflightRequest) {
+  return runScreening(input);
 }

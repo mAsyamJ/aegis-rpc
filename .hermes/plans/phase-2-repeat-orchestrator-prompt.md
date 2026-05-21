@@ -4,8 +4,8 @@
 **Board:** `aegis-hackathon`  
 **Parent:** `t_1249ee6d` (Phase 2B: plan.md full spec via Cursor)  
 **Workspace:** `dir:/home/asyam/dev/Project/aegis-hackathon-kit/aegis-rpc`  
-**Model backend:** `cursor-composer-2` at `http://127.0.0.1:8787/v1`  
-**Mode:** Orchestrate only — do NOT implement code yourself.
+**Model backend:** `cursor-composer-2` at `http://127.0.0.1:8787/v1` (headless Cursor Agent when `CURSOR_BRIDGE_MODE=agent`)  
+**Mode:** Orchestrate only — do NOT implement code yourself. Kanban workers use the same bridge for implementation.
 
 ---
 

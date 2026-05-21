@@ -1,5 +1,14 @@
 import { decodeFunctionData, maxUint256 } from "viem";
 import type { PreflightRequest, TxIntent } from "@/lib/types";
+import {
+  decodeErc20ApproveFields,
+  decodeInnerCallSummary,
+} from "./decodeCallData";
+import { decodeWithIndexer } from "@/lib/indexer/decodeWithIndexer";
+import { useCaseFromContractName } from "@/lib/indexer/abiIndex";
+import { lookupKnownSelector } from "./knownSelectors";
+import { enrichIntentWithMulticall } from "./multicallDecoder";
+import { enrichIntentWithSafeExec } from "./safeExecDecoder";
 import { classifyUseCase } from "./useCaseClassifier";
 
 const APPROVE_SELECTOR = "0x095ea7b3";
@@ -48,7 +57,7 @@ export function decodeTxIntent(
   requestId = newRequestId()
 ): TxIntent {
   const data = (input.data ?? "0x") as `0x${string}`;
-  const intent: TxIntent = {
+  let intent: TxIntent = {
     requestId,
     chainId: input.chainId,
     method: "aegis_preflight",
@@ -67,6 +76,18 @@ export function decodeTxIntent(
   if (!intent.data || intent.data === "0x") {
     intent.decodedFunction = "native_transfer";
     return intent;
+  }
+
+  if (intent.to) {
+    const indexed = decodeWithIndexer(intent.to, intent.data);
+    if (indexed) {
+      intent.decodedFunction = indexed.decodedFunction;
+      intent.decodedArgs = indexed.decodedArgs;
+      intent.isUnknownSelector = false;
+      if (indexed.isUnlimitedApproval) intent.isUnlimitedApproval = true;
+      intent.useCase = useCaseFromContractName(indexed.contractName);
+      return intent;
+    }
   }
 
   if (intent.selector === APPROVE_SELECTOR) {
@@ -106,7 +127,48 @@ export function decodeTxIntent(
     return intent;
   }
 
-  intent.decodedFunction = `unknown(${intent.selector})`;
-  intent.isUnknownSelector = true;
+  const known = lookupKnownSelector(intent.selector);
+  if (known) {
+    intent.decodedFunction = known.signature;
+    intent.isUnknownSelector = false;
+    intent.useCase = known.useCase;
+  } else {
+    intent.decodedFunction = `unknown(${intent.selector})`;
+    intent.isUnknownSelector = true;
+  }
+
+  intent = enrichIntentWithMulticall(intent);
+  intent = enrichIntentWithSafeExec(intent);
+
+  if (intent.safeInner?.data && intent.safeInner.data.length >= 10) {
+    const innerApprove = decodeErc20ApproveFields(intent.safeInner.data);
+    if (innerApprove.isUnlimitedApproval) {
+      intent.isUnlimitedApproval = true;
+      intent.decodedArgs = {
+        ...intent.decodedArgs,
+        innerSpender: innerApprove.spender,
+      };
+    }
+  }
+
   return intent;
 }
+
+/** Decode raw callData (UserOp / nested) without full preflight context. */
+export function decodeCallDataIntent(
+  chainId: number,
+  callData: `0x${string}`,
+  from?: `0x${string}`,
+  to?: `0x${string}`
+): TxIntent {
+  const input: PreflightRequest = {
+    chainId,
+    from,
+    to,
+    data: callData,
+    valueWei: "0",
+  };
+  return decodeTxIntent(input);
+}
+
+export { decodeInnerCallSummary };

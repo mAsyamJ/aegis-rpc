@@ -1,0 +1,1525 @@
+{
+  "chainId": 84532,
+  "syncedAt": "2026-05-21T02:51:16.449Z",
+  "contracts": {
+    "0xdd59bc2e7ea61e689d16514428dd618cfb825011": {
+      "name": "AegisPolicyRegistry",
+      "address": "0xdd59bc2e7ea61e689d16514428dd618cfb825011",
+      "abi": [
+        {
+          "type": "function",
+          "name": "deactivatePolicy",
+          "inputs": [
+            {
+              "name": "policyId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "getPolicy",
+          "inputs": [
+            {
+              "name": "policyId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "owner",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "policyHash",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "metadataURI",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "updatedAt",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "active",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "getPolicyHash",
+          "inputs": [
+            {
+              "name": "policyId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "policies",
+          "inputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "owner",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "policyHash",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "metadataURI",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "updatedAt",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "active",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "registerPolicy",
+          "inputs": [
+            {
+              "name": "policyId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "policyHash",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "metadataURI",
+              "type": "string",
+              "internalType": "string"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "updatePolicy",
+          "inputs": [
+            {
+              "name": "policyId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "newHash",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "metadataURI",
+              "type": "string",
+              "internalType": "string"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "verifyHash",
+          "inputs": [
+            {
+              "name": "policyId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "hash",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "event",
+          "name": "PolicyDeactivated",
+          "inputs": [
+            {
+              "name": "policyId",
+              "type": "bytes32",
+              "indexed": true,
+              "internalType": "bytes32"
+            },
+            {
+              "name": "timestamp",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "type": "event",
+          "name": "PolicyRegistered",
+          "inputs": [
+            {
+              "name": "policyId",
+              "type": "bytes32",
+              "indexed": true,
+              "internalType": "bytes32"
+            },
+            {
+              "name": "owner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "policyHash",
+              "type": "bytes32",
+              "indexed": false,
+              "internalType": "bytes32"
+            },
+            {
+              "name": "metadataURI",
+              "type": "string",
+              "indexed": false,
+              "internalType": "string"
+            },
+            {
+              "name": "timestamp",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "type": "event",
+          "name": "PolicyUpdated",
+          "inputs": [
+            {
+              "name": "policyId",
+              "type": "bytes32",
+              "indexed": true,
+              "internalType": "bytes32"
+            },
+            {
+              "name": "oldHash",
+              "type": "bytes32",
+              "indexed": false,
+              "internalType": "bytes32"
+            },
+            {
+              "name": "newHash",
+              "type": "bytes32",
+              "indexed": false,
+              "internalType": "bytes32"
+            },
+            {
+              "name": "metadataURI",
+              "type": "string",
+              "indexed": false,
+              "internalType": "string"
+            },
+            {
+              "name": "timestamp",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "type": "error",
+          "name": "NotPolicyOwner",
+          "inputs": [
+            {
+              "name": "policyId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "caller",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "type": "error",
+          "name": "PolicyAlreadyExists",
+          "inputs": [
+            {
+              "name": "policyId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "type": "error",
+          "name": "PolicyNotActive",
+          "inputs": [
+            {
+              "name": "policyId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "type": "error",
+          "name": "PolicyNotFound",
+          "inputs": [
+            {
+              "name": "policyId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        }
+      ],
+      "selectors": {
+        "0x18cb97b6": "deactivatePolicy(bytes32)",
+        "0xa3f685f9": "getPolicy(bytes32)",
+        "0xc73176fa": "getPolicyHash(bytes32)",
+        "0xddbfd8ef": "policies(bytes32)",
+        "0x99f90eb2": "registerPolicy(bytes32,bytes32,string)",
+        "0x1776be00": "updatePolicy(bytes32,bytes32,string)",
+        "0x45437887": "verifyHash(bytes32,bytes32)"
+      }
+    },
+    "0xba0e8e5cbdd3dc2d3787776298fa524313bab52e": {
+      "name": "DemoERC20",
+      "address": "0xba0e8e5cbdd3dc2d3787776298fa524313bab52e",
+      "abi": [
+        {
+          "type": "constructor",
+          "inputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "allowance",
+          "inputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "approve",
+          "inputs": [
+            {
+              "name": "spender",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "balanceOf",
+          "inputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "decimals",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint8",
+              "internalType": "uint8"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "mint",
+          "inputs": [
+            {
+              "name": "to",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "name",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "symbol",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "totalSupply",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "transfer",
+          "inputs": [
+            {
+              "name": "to",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "transferFrom",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "to",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "event",
+          "name": "Approval",
+          "inputs": [
+            {
+              "name": "owner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "spender",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "value",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "type": "event",
+          "name": "Transfer",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "to",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "value",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        }
+      ],
+      "selectors": {
+        "0xdd62ed3e": "allowance(address,address)",
+        "0x095ea7b3": "approve(address,uint256)",
+        "0x70a08231": "balanceOf(address)",
+        "0x313ce567": "decimals()",
+        "0x40c10f19": "mint(address,uint256)",
+        "0x06fdde03": "name()",
+        "0x95d89b41": "symbol()",
+        "0x18160ddd": "totalSupply()",
+        "0xa9059cbb": "transfer(address,uint256)",
+        "0x23b872dd": "transferFrom(address,address,uint256)"
+      }
+    },
+    "0x29993246ff751a72b43c1b47583822c017691995": {
+      "name": "DemoSpender",
+      "address": "0x29993246ff751a72b43c1b47583822c017691995",
+      "abi": [
+        {
+          "type": "constructor",
+          "inputs": [
+            {
+              "name": "_token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "pullTokens",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "pulled",
+          "inputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "token",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "event",
+          "name": "TokensPulled",
+          "inputs": [
+            {
+              "name": "from",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        }
+      ],
+      "selectors": {
+        "0xeada79cc": "pullTokens(address,uint256)",
+        "0x6ea6f87f": "pulled(address)",
+        "0xfc0c546a": "token()"
+      }
+    },
+    "0x0355bdcac2a7078e67a223422632c94f1af762a0": {
+      "name": "AgentUseCasePolicyApp",
+      "address": "0x0355bdcac2a7078e67a223422632c94f1af762a0",
+      "abi": [
+        {
+          "type": "function",
+          "name": "agentPolicies",
+          "inputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "active",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "maxTxUsdE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "maxAgeSeconds",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "ethUsdFeed",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "approvedSelectors",
+          "inputs": [
+            {
+              "name": "",
+              "type": "bytes4",
+              "internalType": "bytes4"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "approvedTargets",
+          "inputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "checkNativeTransfer",
+          "inputs": [
+            {
+              "name": "agent",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "target",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "valueWei",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "ok",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "usdValueE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "readPriceE8",
+          "inputs": [
+            {
+              "name": "feed",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "maxAgeSeconds",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "data",
+              "type": "tuple",
+              "internalType": "struct ChainlinkFeedConsumer.PriceData",
+              "components": [
+                {
+                  "name": "priceE8",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "updatedAt",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "decimals",
+                  "type": "uint8",
+                  "internalType": "uint8"
+                },
+                {
+                  "name": "ageSeconds",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                }
+              ]
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "setAgentPolicy",
+          "inputs": [
+            {
+              "name": "agent",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "maxTxUsdE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "maxAgeSeconds",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "ethUsdFeed",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "setApprovedSelector",
+          "inputs": [
+            {
+              "name": "selector",
+              "type": "bytes4",
+              "internalType": "bytes4"
+            },
+            {
+              "name": "approved",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "setApprovedTarget",
+          "inputs": [
+            {
+              "name": "target",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "approved",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "weiToUsdE8",
+          "inputs": [
+            {
+              "name": "valueWei",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "ethUsdE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "pure"
+        },
+        {
+          "type": "event",
+          "name": "AgentPolicySet",
+          "inputs": [
+            {
+              "name": "agent",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "maxTxUsdE8",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "type": "error",
+          "name": "ExceedsPerActionLimit",
+          "inputs": [
+            {
+              "name": "usdE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "limitE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "type": "error",
+          "name": "InvalidPrice",
+          "inputs": [
+            {
+              "name": "feed",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "answer",
+              "type": "int256",
+              "internalType": "int256"
+            }
+          ]
+        },
+        {
+          "type": "error",
+          "name": "NoAgentPolicy",
+          "inputs": [
+            {
+              "name": "agent",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "type": "error",
+          "name": "StalePrice",
+          "inputs": [
+            {
+              "name": "feed",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "age",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "maxAge",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "type": "error",
+          "name": "TargetNotApproved",
+          "inputs": [
+            {
+              "name": "target",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        }
+      ],
+      "selectors": {
+        "0xcd4b90f9": "agentPolicies(address)",
+        "0x1259cc87": "approvedSelectors(bytes4)",
+        "0x9779d1a6": "approvedTargets(address)",
+        "0x76bd5642": "checkNativeTransfer(address,address,uint256)",
+        "0x73d41db0": "readPriceE8(address,uint256)",
+        "0xee49574a": "setAgentPolicy(address,uint256,uint256,address)",
+        "0xd9aed708": "setApprovedSelector(bytes4,bool)",
+        "0xb7f9a748": "setApprovedTarget(address,bool)",
+        "0x31d195f0": "weiToUsdE8(uint256,uint256)"
+      }
+    },
+    "0x320b965a9b79229703548e51c5bcae9c5769406c": {
+      "name": "DeFiUseCasePolicyApp",
+      "address": "0x320b965a9b79229703548e51c5bcae9c5769406c",
+      "abi": [
+        {
+          "type": "function",
+          "name": "checkSwapDeviation",
+          "inputs": [
+            {
+              "name": "baseFeed",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "quoteFeed",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "inputAmountE18",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "outputAmountE18",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "maxDeviationBps",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "maxAgeSeconds",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "ok",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "deviationBps",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "readPriceE8",
+          "inputs": [
+            {
+              "name": "feed",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "maxAgeSeconds",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "data",
+              "type": "tuple",
+              "internalType": "struct ChainlinkFeedConsumer.PriceData",
+              "components": [
+                {
+                  "name": "priceE8",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "updatedAt",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "decimals",
+                  "type": "uint8",
+                  "internalType": "uint8"
+                },
+                {
+                  "name": "ageSeconds",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                }
+              ]
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "weiToUsdE8",
+          "inputs": [
+            {
+              "name": "valueWei",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "ethUsdE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "pure"
+        },
+        {
+          "type": "error",
+          "name": "DeviationTooHigh",
+          "inputs": [
+            {
+              "name": "deviationBps",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "maxBps",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "type": "error",
+          "name": "InvalidPrice",
+          "inputs": [
+            {
+              "name": "feed",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "answer",
+              "type": "int256",
+              "internalType": "int256"
+            }
+          ]
+        },
+        {
+          "type": "error",
+          "name": "StalePrice",
+          "inputs": [
+            {
+              "name": "feed",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "age",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "maxAge",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        }
+      ],
+      "selectors": {
+        "0x02d23590": "checkSwapDeviation(address,address,uint256,uint256,uint256,uint256)",
+        "0x73d41db0": "readPriceE8(address,uint256)",
+        "0x31d195f0": "weiToUsdE8(uint256,uint256)"
+      }
+    },
+    "0x6b41b1d1bfd18be664fc73969b4dd30323fd025c": {
+      "name": "RWAUseCasePolicyApp",
+      "address": "0x6b41b1d1bfd18be664fc73969b4dd30323fd025c",
+      "abi": [
+        {
+          "type": "function",
+          "name": "checkMintValue",
+          "inputs": [
+            {
+              "name": "assetId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "unitAmountE18",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "ok",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "mintUsdE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "checkRedeemValue",
+          "inputs": [
+            {
+              "name": "assetId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "unitAmountE18",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "ok",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "redeemUsdE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "readPriceE8",
+          "inputs": [
+            {
+              "name": "feed",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "maxAgeSeconds",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "data",
+              "type": "tuple",
+              "internalType": "struct ChainlinkFeedConsumer.PriceData",
+              "components": [
+                {
+                  "name": "priceE8",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "updatedAt",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "decimals",
+                  "type": "uint8",
+                  "internalType": "uint8"
+                },
+                {
+                  "name": "ageSeconds",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                }
+              ]
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "rwaPolicies",
+          "inputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "navFeed",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "maxMintUsdE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "maxRedeemUsdE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "maxAgeSeconds",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "active",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "setRwaPolicy",
+          "inputs": [
+            {
+              "name": "assetId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "navFeed",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "maxMintUsdE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "maxRedeemUsdE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "maxAgeSeconds",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "function",
+          "name": "weiToUsdE8",
+          "inputs": [
+            {
+              "name": "valueWei",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "ethUsdE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "pure"
+        },
+        {
+          "type": "error",
+          "name": "InvalidPrice",
+          "inputs": [
+            {
+              "name": "feed",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "answer",
+              "type": "int256",
+              "internalType": "int256"
+            }
+          ]
+        },
+        {
+          "type": "error",
+          "name": "MintValueExceeded",
+          "inputs": [
+            {
+              "name": "usdE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "limitE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "type": "error",
+          "name": "NoPolicyForAsset",
+          "inputs": [
+            {
+              "name": "assetId",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "type": "error",
+          "name": "RedeemValueExceeded",
+          "inputs": [
+            {
+              "name": "usdE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "limitE8",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "type": "error",
+          "name": "StalePrice",
+          "inputs": [
+            {
+              "name": "feed",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "age",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "maxAge",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        }
+      ],
+      "selectors": {
+        "0xeb601ae8": "checkMintValue(bytes32,uint256)",
+        "0x641dd8fc": "checkRedeemValue(bytes32,uint256)",
+        "0x73d41db0": "readPriceE8(address,uint256)",
+        "0x9ead0179": "rwaPolicies(bytes32)",
+        "0x8993da4b": "setRwaPolicy(bytes32,address,uint256,uint256,uint256)",
+        "0x31d195f0": "weiToUsdE8(uint256,uint256)"
+      }
+    }
+  }
+}

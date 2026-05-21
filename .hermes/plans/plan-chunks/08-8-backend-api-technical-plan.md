@@ -2,9 +2,9 @@
 
 ### POST /api/rpc — JSON-RPC Gateway
 
-**Passthrough:** `eth_chainId`, `eth_blockNumber`, `eth_getBalance`, `eth_call`, `eth_getTransactionCount`, `eth_estimateGas`, `eth_gasPrice`, `eth_maxPriorityFeePerGas`, `eth_getCode`, `eth_getTransactionByHash`, `eth_getTransactionReceipt`
+**Passthrough:** `eth_chainId`, `eth_blockNumber`, `eth_getBalance`, `eth_call`, `eth_getTransactionCount`, `eth_estimateGas`, `eth_gasPrice`, `eth_maxPriorityFeePerGas`, `eth_getCode`, `eth_getTransactionByHash`, `eth_getTransactionReceipt`, `eth_getBlockByNumber`, `eth_getBlockByHash`, `eth_getLogs`
 
-**Intercepted:** `eth_sendRawTransaction`, `aegis_preflight`, `aegis_sendTransaction`
+**Intercepted:** `eth_sendRawTransaction`, `eth_sendTransaction`, `aegis_preflight`, `aegis_sendTransaction`
 
 ```json
 // Passthrough request + response

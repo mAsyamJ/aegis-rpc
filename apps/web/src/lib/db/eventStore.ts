@@ -21,7 +21,16 @@ export function updateEvent(
   patch: Partial<
     Pick<
       AuditEvent,
-      "aiMemo" | "memoStatus" | "aiAnalysis" | "broadcasted" | "txHash"
+      | "aiMemo"
+      | "memoStatus"
+      | "aiAnalysis"
+      | "broadcasted"
+      | "txHash"
+      | "unknownSelectorGuess"
+      | "riskSummary"
+      | "primaryConcern"
+      | "aiGeneratedAt"
+      | "aiConfidence"
     >
   >
 ): AuditEvent | undefined {

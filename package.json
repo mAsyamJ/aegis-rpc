@@ -1,0 +1,14 @@
+{
+  "name": "aegis-rpc",
+  "private": true,
+  "description": "Aegis RPC hackathon app — run web from apps/web",
+  "scripts": {
+    "dev": "npm run dev --prefix apps/web",
+    "build": "npm run build --prefix apps/web",
+    "start": "npm run start --prefix apps/web -- --port 3020",
+    "lint": "npm run lint --prefix apps/web",
+    "test": "npm run test --prefix apps/web",
+    "sync:abi-index": "node scripts/sync-abi-index.mjs",
+    "demo": "npm run build --prefix apps/web && npm run start --prefix apps/web -- --port 3020"
+  }
+}

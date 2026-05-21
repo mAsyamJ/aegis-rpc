@@ -1,12 +1,17 @@
 import type { AegisPolicy } from "@/lib/types";
+import { computePolicyHash } from "@/lib/chain/policyVerifier";
 import { defaultWalletPolicy } from "./default-wallet-policy";
 import { defaultAgentPolicy } from "./default-agent-policy";
 import { defaultAgentPolicyWarn } from "./default-agent-policy-warn";
+import { defaultAaPolicy } from "./default-aa-policy";
+import { defaultTreasuryPolicy } from "./default-treasury-policy";
 
 const policies = new Map<string, AegisPolicy>([
   [defaultWalletPolicy.id, defaultWalletPolicy],
   [defaultAgentPolicy.id, defaultAgentPolicy],
   [defaultAgentPolicyWarn.id, defaultAgentPolicyWarn],
+  [defaultAaPolicy.id, defaultAaPolicy],
+  [defaultTreasuryPolicy.id, defaultTreasuryPolicy],
 ]);
 
 export function getPolicy(policyId?: string): AegisPolicy {
@@ -27,16 +32,5 @@ export function upsertPolicy(policy: AegisPolicy): AegisPolicy {
 
 export function getPolicyHash(policyId: string): string {
   const policy = getPolicy(policyId);
-  const payload = JSON.stringify({
-    id: policy.id,
-    mode: policy.mode,
-    template: policy.template,
-    rules: policy.rules,
-    limits: policy.limits,
-  });
-  let hash = 0;
-  for (let i = 0; i < payload.length; i++) {
-    hash = (hash * 31 + payload.charCodeAt(i)) >>> 0;
-  }
-  return `0x${hash.toString(16).padStart(64, "0")}`;
+  return computePolicyHash(policy);
 }

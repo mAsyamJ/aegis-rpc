@@ -1,61 +1,108 @@
 import type {
   AegisEvent,
   DemoScenario,
+  PolicyMode,
   PreflightRequest,
   PreflightResponse,
+  TxIntent,
+  Verdict,
 } from "@/lib/types/aegis";
 import { demoScenarios, getScenario } from "@/lib/fixtures/demoScenarios";
 import {
   buildPreflightResponse,
   intentFromScenario,
+  mapIntentFromApi,
   pollAiAnalysis,
 } from "./mapPreflightResponse";
 import { mapPolicyToUi } from "./mapPolicies";
+import { policyIdForScenario } from "./scenarioPolicy";
 
 const USING_FIXTURES =
   process.env.NEXT_PUBLIC_AEGIS_FIXTURES === "true";
 
-const SCENARIO_POLICY: Record<string, string> = {
-  "agent-safe-low-value": "default-agent-policy",
-  "agent-over-cap": "default-agent-policy",
-  "agent-unknown-selector": "default-agent-policy-warn",
-  "agent-stale-feed": "default-agent-policy",
-  "wallet-unlimited-approval": "default-wallet-policy",
-};
+function fixtureVerdictForMode(
+  scenario: DemoScenario,
+  mode: PolicyMode,
+): { verdict: Verdict; reasonCode: string } {
+  if (
+    mode !== "enforce" &&
+    scenario.expectedVerdict === "BLOCK" &&
+    scenario.id === "agent-over-cap"
+  ) {
+    return {
+      verdict: "WARN",
+      reasonCode: scenario.expectedReasonCode,
+    };
+  }
+  return {
+    verdict: scenario.expectedVerdict,
+    reasonCode: scenario.expectedReasonCode,
+  };
+}
 
-async function fixturePreflight(req: PreflightRequest): Promise<PreflightResponse> {
+function fixtureAiForWarn(scenario: DemoScenario): DemoScenario["ai"] {
+  if (scenario.id !== "agent-over-cap") return scenario.ai;
+  return {
+    ...scenario.ai,
+    preSigningAssist: {
+      headline:
+        "Before overriding: this transfer exceeds your agent's $500/action policy cap by 9.6×.",
+      bullets: [
+        "Chainlink ETH/USD feed is fresh — USD notional is reliable.",
+        "Override only for an intentional manual exception.",
+        "Consider raising the per-tx cap if this amount recurs.",
+      ],
+    },
+  };
+}
+
+async function fixturePreflight(
+  req: PreflightRequest,
+  mode: PolicyMode,
+): Promise<PreflightResponse> {
   const scenario = req.scenarioId
     ? getScenario(req.scenarioId)
     : demoScenarios[0];
   if (!scenario) throw new Error("unknown scenario");
   await new Promise((r) => setTimeout(r, 120));
+  const { verdict, reasonCode } = fixtureVerdictForMode(scenario, mode);
+  const ai =
+    verdict === "WARN" && scenario.id === "agent-over-cap"
+      ? fixtureAiForWarn(scenario)
+      : scenario.ai;
   return {
     requestId: `req_${Math.random().toString(36).slice(2, 10)}`,
-    verdict: scenario.expectedVerdict,
-    reasonCode: scenario.expectedReasonCode,
+    verdict,
+    reasonCode,
     reason: scenario.summary,
     intent: scenario.intent,
     checks: scenario.checks,
     adapters: scenario.adapters,
-    ai: scenario.ai,
+    ai,
+    memoStatus: "ready",
     policyHash: scenario.policyHash,
-    policyMode: scenario.policyMode,
+    policyMode: mode,
     latencyMs: scenario.latencyMs,
     broadcasted: false,
     createdAt: new Date().toISOString(),
   };
 }
 
-export async function preflight(req: PreflightRequest): Promise<PreflightResponse> {
+/** POST preflight only — AI memo polling is owned by usePreflight / VerdictCard. */
+export async function postPreflight(
+  req: PreflightRequest & { policyMode?: PolicyMode },
+): Promise<PreflightResponse> {
   const scenarioId = req.scenarioId ?? "agent-safe-low-value";
   const scenario = getScenario(scenarioId);
   if (!scenario) throw new Error("unknown scenario");
 
+  const mode = req.policyMode ?? scenario.policyMode;
+
   if (USING_FIXTURES || scenarioId === "agent-stale-feed") {
-    return fixturePreflight(req);
+    return fixturePreflight(req, mode);
   }
 
-  const policyId = SCENARIO_POLICY[scenarioId] ?? "default-wallet-policy";
+  const policyId = policyIdForScenario(scenarioId);
   const body = {
     ...intentFromScenario(scenario.intent),
     policyId,
@@ -68,8 +115,62 @@ export async function preflight(req: PreflightRequest): Promise<PreflightRespons
   });
   if (!r.ok) throw new Error("preflight failed");
   const api = await r.json();
-  const ai = await pollAiAnalysis(api.requestId);
-  return buildPreflightResponse(api, scenario.intent, ai);
+  const mapped = buildPreflightResponse(api, scenario.intent);
+  const memoStatus =
+    api.memoStatus === "generating" || !mapped.ai
+      ? ("generating" as const)
+      : ("ready" as const);
+  return { ...mapped, memoStatus, policyMode: (api.policyMode as PolicyMode) ?? mode };
+}
+
+/** Live preflight with explicit calldata (wallet / contract demos). */
+export async function postPreflightLive(body: {
+  chainId: number;
+  from?: string;
+  to?: string;
+  data?: string;
+  valueWei?: string;
+  policyId?: string;
+  serializedTransaction?: string;
+}): Promise<PreflightResponse> {
+  const r = await fetch("/api/preflight", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) throw new Error("preflight failed");
+  const api = await r.json();
+  const baseIntent: TxIntent = {
+    from: body.from ?? "",
+    to: body.to ?? "",
+    value: body.valueWei ?? "0",
+    data: body.data ?? "0x",
+    selector: body.data && body.data.length >= 10 ? body.data.slice(0, 10) : "0x",
+    chainId: body.chainId,
+  };
+  const intent = mapIntentFromApi(baseIntent, api.intent);
+  const mapped = buildPreflightResponse(api, intent);
+  const memoStatus =
+    api.memoStatus === "generating" || !mapped.ai
+      ? ("generating" as const)
+      : ("ready" as const);
+  let result = { ...mapped, memoStatus, policyMode: (api.policyMode as PolicyMode) ?? "enforce" };
+  if (memoStatus === "generating") {
+    const ai = await pollAiAnalysis(result.requestId);
+    if (ai) result = { ...result, ai, memoStatus: "ready" };
+  }
+  return result;
+}
+
+/** @deprecated Prefer postPreflight + usePreflight hook */
+export async function preflight(req: PreflightRequest): Promise<PreflightResponse> {
+  const result = await postPreflight(req);
+  if (result.memoStatus === "generating") {
+    const { pollAiAnalysis } = await import("./mapPreflightResponse");
+    const ai = await pollAiAnalysis(result.requestId);
+    if (ai) return { ...result, ai, memoStatus: "ready" };
+  }
+  return result;
 }
 
 export async function safeSend(requestId: string): Promise<{ txHash: string }> {
@@ -91,7 +192,7 @@ export async function getEvents(): Promise<AegisEvent[]> {
   const json = (await r.json()) as { events: unknown[] };
   const { mapAuditEventToUi } = await import("./mapPreflightResponse");
   return json.events.map((e) =>
-    mapAuditEventToUi(e as Parameters<typeof mapAuditEventToUi>[0])
+    mapAuditEventToUi(e as Parameters<typeof mapAuditEventToUi>[0]),
   ) as AegisEvent[];
 }
 
@@ -138,11 +239,17 @@ export async function getPolicies() {
   return json.policies.map(mapPolicyToUi);
 }
 
-export async function setPolicyMode(policyId: string, mode: "observe" | "warn" | "enforce") {
+export async function setPolicyMode(policyId: string, mode: PolicyMode) {
   const r = await fetch("/api/policies", {
     method: "PUT",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ id: policyId, name: policyId, mode, template: "agent", chainId: 84532 }),
+    body: JSON.stringify({
+      id: policyId,
+      name: policyId,
+      mode,
+      template: "agent",
+      chainId: 84532,
+    }),
   });
   if (!r.ok) throw new Error("policy update failed");
   return r.json();

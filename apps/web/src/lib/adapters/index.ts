@@ -1,38 +1,50 @@
-import { approvalRiskAdapter } from "./approvalRiskAdapter";
 import { allowlistAdapter } from "./allowlistAdapter";
+import { approvalRiskAdapter } from "./approvalRiskAdapter";
+import { agentPolicyAdapter } from "./agentPolicyAdapter";
 import { chainlinkPriceAdapter } from "./chainlinkPriceAdapter";
 import { contractCodeAdapter } from "./contractCodeAdapter";
+import { contractRegistryAdapter } from "./contractRegistryAdapter";
+import { previewEnrichmentAdapter } from "./previewEnrichmentAdapter";
+import { safeTreasuryAdapter } from "./safeTreasuryAdapter";
 import { simulationAdapter } from "./simulationAdapter";
-import { agentPolicyAdapter } from "./agentPolicyAdapter";
+import { spenderReputationAdapter } from "./spenderReputationAdapter";
+import { userOpAdapter } from "./userOpAdapter";
 import type { AegisAdapter } from "./types";
 import type { AdapterSignal, AegisPolicy, TxIntent } from "@/lib/types";
 
+/** Order: allowlist → enrichment → approval → spender → agent → userOp → simulation → chainlink → contract → treasury */
 export const allAdapters: AegisAdapter[] = [
-  approvalRiskAdapter,
   allowlistAdapter,
+  previewEnrichmentAdapter,
+  contractRegistryAdapter,
+  approvalRiskAdapter,
+  spenderReputationAdapter,
   agentPolicyAdapter,
+  userOpAdapter,
+  simulationAdapter,
   chainlinkPriceAdapter,
   contractCodeAdapter,
-  simulationAdapter,
+  safeTreasuryAdapter,
 ];
 
 export async function collectAdapterSignals(
   intent: TxIntent,
   policy: AegisPolicy
 ): Promise<AdapterSignal[]> {
-  const signals: AdapterSignal[] = [];
-  for (const adapter of allAdapters) {
-    if (!adapter.supports(intent, policy)) continue;
-    signals.push(await adapter.getSignal(intent, policy));
-  }
-  return signals;
+  const active = allAdapters.filter((a) => a.supports(intent, policy));
+  return Promise.all(active.map((a) => a.getSignal(intent, policy)));
 }
 
 export {
-  approvalRiskAdapter,
   allowlistAdapter,
+  approvalRiskAdapter,
   chainlinkPriceAdapter,
   contractCodeAdapter,
   simulationAdapter,
   agentPolicyAdapter,
+  previewEnrichmentAdapter,
+  contractRegistryAdapter,
+  userOpAdapter,
+  spenderReputationAdapter,
+  safeTreasuryAdapter,
 };

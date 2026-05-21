@@ -21,8 +21,18 @@ export const contractCodeAdapter: AegisAdapter = {
     }
 
     try {
-      const code = (await forwardRpcCall("eth_getCode", [intent.to, "latest"])) as string;
-      const isContract = code && code !== "0x" && code.length > 4;
+      const raw = await forwardRpcCall(null, "eth_getCode", [intent.to, "latest"]);
+      if ("error" in raw) {
+        return {
+          adapter: "ContractCodeAdapter",
+          status: "ERROR",
+          reasonCode: "CODE_CHECK_FAILED",
+          message: raw.error.message,
+          latencyMs: Date.now() - started,
+        };
+      }
+      const code = typeof raw.result === "string" ? raw.result : "0x";
+      const isContract = Boolean(code && code !== "0x" && code.length > 4);
       if (!isContract && policy.rules.blockUnknownContracts) {
         return {
           adapter: "ContractCodeAdapter",

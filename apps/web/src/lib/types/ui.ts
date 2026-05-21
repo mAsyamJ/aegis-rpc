@@ -47,6 +47,8 @@ export interface PreflightRequest {
   intent: TxIntent;
 }
 
+export type MemoStatus = "idle" | "generating" | "ready" | "failed";
+
 export interface PreflightResponse {
   requestId: string;
   verdict: Verdict;
@@ -56,6 +58,7 @@ export interface PreflightResponse {
   checks: RiskCheck[];
   adapters: AdapterSignal[];
   ai?: AiAnalysis;
+  memoStatus?: MemoStatus;
   policyHash: string;
   policyMode: PolicyMode;
   latencyMs: number;
@@ -90,6 +93,8 @@ export interface AegisPolicy {
   allowlists: { name: string; entries: string[] }[];
   rules: { id: string; description: string; severity: Verdict }[];
   policyHash: string;
+  onChainHash?: string | null;
+  onChainVerified?: boolean;
   updatedAt: string;
 }
 

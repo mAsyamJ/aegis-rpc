@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import {
+  getOnChainPolicyHash,
+  verifyOnChainPolicyHash,
+} from "@/lib/chain/policyVerifier";
 import { listPolicies, upsertPolicy, getPolicyHash } from "@/lib/policies";
 import type { AegisPolicy } from "@/lib/types";
 
@@ -29,10 +33,31 @@ const policySchema = z.object({
 });
 
 export async function GET() {
-  const policies = listPolicies().map((p) => ({
-    ...p,
-    policyHash: getPolicyHash(p.id),
-  }));
+  const policies = await Promise.all(
+    listPolicies().map(async (p) => {
+      const policyHash = getPolicyHash(p.id);
+      let onChainHash: string | null = null;
+      let onChainVerified = false;
+      try {
+        onChainHash = (await getOnChainPolicyHash(p.id)) ?? null;
+        if (onChainHash) {
+          onChainVerified = await verifyOnChainPolicyHash(
+            p.id,
+            policyHash as `0x${string}`,
+          );
+        }
+      } catch {
+        onChainHash = null;
+        onChainVerified = false;
+      }
+      return {
+        ...p,
+        policyHash,
+        onChainHash,
+        onChainVerified,
+      };
+    })
+  );
   return NextResponse.json({ policies });
 }
 

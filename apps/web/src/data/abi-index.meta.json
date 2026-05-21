@@ -1,0 +1,68 @@
+{
+  "chainId": 84532,
+  "syncedAt": "2026-05-21T02:51:16.449Z",
+  "strictDualSource": true,
+  "blockscoutApi": "https://base-sepolia.blockscout.com/api",
+  "contracts": [
+    {
+      "name": "AegisPolicyRegistry",
+      "address": "0xdd59bc2e7ea61e689d16514428dd618cfb825011",
+      "selectorCount": 7,
+      "abiHash": "df1c079ebc7edcd9",
+      "sources": [
+        "forge",
+        "blockscout"
+      ]
+    },
+    {
+      "name": "DemoERC20",
+      "address": "0xba0e8e5cbdd3dc2d3787776298fa524313bab52e",
+      "selectorCount": 10,
+      "abiHash": "0b46e7aee6b87b23",
+      "sources": [
+        "forge",
+        "blockscout"
+      ]
+    },
+    {
+      "name": "DemoSpender",
+      "address": "0x29993246ff751a72b43c1b47583822c017691995",
+      "selectorCount": 3,
+      "abiHash": "7e19ef1ef88607c6",
+      "sources": [
+        "forge",
+        "blockscout"
+      ]
+    },
+    {
+      "name": "AgentUseCasePolicyApp",
+      "address": "0x0355bdcac2a7078e67a223422632c94f1af762a0",
+      "selectorCount": 9,
+      "abiHash": "b8cc1ab5580aa8b2",
+      "sources": [
+        "forge",
+        "blockscout"
+      ]
+    },
+    {
+      "name": "DeFiUseCasePolicyApp",
+      "address": "0x320b965a9b79229703548e51c5bcae9c5769406c",
+      "selectorCount": 3,
+      "abiHash": "ef4158a8723b0d30",
+      "sources": [
+        "forge",
+        "blockscout"
+      ]
+    },
+    {
+      "name": "RWAUseCasePolicyApp",
+      "address": "0x6b41b1d1bfd18be664fc73969b4dd30323fd025c",
+      "selectorCount": 6,
+      "abiHash": "7ff4882f57f442e8",
+      "sources": [
+        "forge",
+        "blockscout"
+      ]
+    }
+  ]
+}

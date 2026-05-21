@@ -27,7 +27,8 @@ export function warnContextPrompt(
 export function memoPrompt(
   verdict: string,
   reasonCode: string,
-  decodedFunction?: string
+  decodedFunction?: string,
+  previewContext?: string
 ): string {
   return [
     MEMO_SYSTEM,
@@ -35,7 +36,22 @@ export function memoPrompt(
     `Verdict: ${verdict}`,
     `Reason: ${reasonCode}`,
     `Function: ${decodedFunction ?? "unknown"}`,
+    previewContext ? `Preview: ${previewContext}` : "",
     "Write 2-3 sentences for OpsRisk dashboard.",
+  ].join("\n");
+}
+
+export function previewEnrichedUnknownPrompt(
+  selector: string,
+  to: string | undefined,
+  previewContext: string
+): string {
+  return [
+    MEMO_SYSTEM,
+    "Role: UnknownSelectorAnalyzer",
+    `Selector ${selector} on ${to ?? "unknown"}.`,
+    previewContext,
+    "Guess function purpose in one sentence. List 2 risks.",
   ].join("\n");
 }
 

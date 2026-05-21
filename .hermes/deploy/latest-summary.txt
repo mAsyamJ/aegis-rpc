@@ -1,0 +1,20 @@
+# D3 deploy summary — 2026-05-21 (Base Sepolia)
+chain: Base Sepolia (84532)
+script: contracts/script/DeployBaseSepolia.s.sol
+signer: testnet keystore (0x4dbecc3495c5F8E7c73aaAa372b0eaE118806A95)
+forge_exit: 0
+
+## Deployed addresses
+AegisPolicyRegistry 0xdd59bC2E7Ea61E689d16514428DD618cFB825011
+DemoERC20 0xba0e8E5CBDD3DC2D3787776298fA524313BAB52E
+DemoSpender 0x29993246fF751a72B43C1B47583822c017691995
+AgentUseCasePolicyApp 0x0355bDCAC2A7078E67A223422632C94F1af762A0
+DeFiUseCasePolicyApp 0x320b965A9b79229703548E51c5BCAE9C5769406C
+RWAUseCasePolicyApp 0x6B41B1d1bFd18be664FC73969B4Dd30323fD025c
+
+## On-chain policy verify
+verifyHash(default-wallet-policy): true
+verifyHash(default-agent-policy): true
+
+artifacts: contracts/deployments/base-sepolia.json
+broadcast: contracts/broadcast/DeployBaseSepolia.s.sol/84532/run-latest.json

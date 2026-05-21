@@ -11,7 +11,7 @@
 | Team | |
 | Track | SEABW |
 | Repo | aegis-rpc/ |
-| Demo URL | local: `npm run start` in apps/web |
+| Demo URL | Local: `npm run start -- --port 3020`. Production: `vercel --prod` from `apps/web` (see `docs/LOCAL_DEV.md`, `./scripts/deploy-vercel-public.sh`); smoke `AEGIS_PROD_URL=… ./tests/curl-production-smoke.sh`. Public RPC: `https://<domain>/api/rpc` (chain 84532). |
 | Video | |
 
 ## Lifecycle checklist
@@ -19,9 +19,9 @@
 - [x] **Phase 0** — Pre-build (kit only; no product code in kit repo)
 - [x] **Phase 1** — Scaffold Next.js app, copy `.kiro`, `AGENTS.md`, this file, `docs/AI_COLLABORATION_LOG.md`
 - [x] **Phase 2** — MVP modules 1–9 (one commit each; see below)
-- [ ] **Phase 3** — Technical plan (`/plan` or Kiro orchestrator)
-- [ ] **Phase 4** — Grill me (judge Q&A; `docs/GRILL_QA.md`)
-- [ ] **Phase 5** — Production deploy (Vercel; approval required)
+- [x] **Phase 3** — Technical plan (`/plan` or Kiro orchestrator)
+- [x] **Phase 4** — Grill me (judge Q&A; `docs/GRILL_QA.md`)
+- [ ] **Phase 5** — Production deploy (Vercel; code ready — set env + `vercel --prod` from `apps/web`; Supabase migration `001_aegis_events.sql`)
 - [ ] **Phase 6** — Push / submit (approval required)
 
 ## MVP modules (one commit per row)
@@ -36,7 +36,7 @@
 | 6 | Chainlink/mock adapter | `feat: chainlink adapter` | [x] | adapter |
 | 7 | RiskOps dashboard | `feat: riskops dashboard` | [x] | frontend |
 | 8 | AI memo panel | `feat: ai memo panel` | [x] | ai-memo |
-| 9 | Base Sepolia proof | `chore: base sepolia demo` | [x] deploy pending approval | smart-contract + qa |
+| 9 | Base Sepolia proof | `chore: base sepolia demo` | [x] deployed 2026-05-21 — registry `0xdd59…5011` (see `contracts/deployments/base-sepolia.json`) | smart-contract + qa |
 
 ## AI collaboration proof
 

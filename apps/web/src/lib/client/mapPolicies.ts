@@ -11,7 +11,11 @@ const TEMPLATE_AUDIENCE: Record<BackendPolicy["template"], UiPolicy["audience"]>
 };
 
 export function mapPolicyToUi(
-  p: BackendPolicy & { policyHash?: string }
+  p: BackendPolicy & {
+    policyHash?: string;
+    onChainHash?: string | null;
+    onChainVerified?: boolean;
+  }
 ): UiPolicy {
   const audience = TEMPLATE_AUDIENCE[p.template] ?? "wallet";
   return {
@@ -62,6 +66,8 @@ export function mapPolicyToUi(
       },
     ],
     policyHash: p.policyHash ?? "0x0",
+    onChainHash: p.onChainHash ?? undefined,
+    onChainVerified: p.onChainVerified,
     updatedAt: new Date().toISOString(),
   };
 }

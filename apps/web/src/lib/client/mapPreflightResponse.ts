@@ -21,6 +21,14 @@ const REASON_LABELS: Record<string, string> = {
   ALL_CHECKS_PASSED: "All deterministic checks passed.",
 };
 
+export type ApiIntentSlice = {
+  decodedFunction?: string;
+  decodedArgs?: Record<string, unknown>;
+  selector?: string;
+  useCase?: string;
+  isUnknownSelector?: boolean;
+};
+
 function verdictToCheckStatus(verdict: Verdict): AdapterSignal["status"] {
   if (verdict === "SAFE") return "OK";
   return verdict;
@@ -76,6 +84,41 @@ export function intentFromScenario(intent: TxIntent) {
   };
 }
 
+function formatArgValue(value: unknown): string {
+  if (value === null || value === undefined) return "—";
+  if (typeof value === "bigint") return value.toString();
+  if (typeof value === "object") return JSON.stringify(value);
+  return String(value);
+}
+
+/** Merge live API decode (ABI indexer) into fixture-shaped UI intent. */
+export function mapIntentFromApi(
+  scenarioIntent: TxIntent,
+  apiIntent?: ApiIntentSlice
+): TxIntent {
+  if (!apiIntent?.decodedFunction) return scenarioIntent;
+
+  const decodedArgs = apiIntent.decodedArgs
+    ? Object.entries(apiIntent.decodedArgs).map(([name, value]) => ({
+        name,
+        type: "unknown",
+        value: formatArgValue(value),
+        highlight:
+          name === "spender" &&
+          apiIntent.decodedFunction?.includes("approve") &&
+          value ===
+            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      }))
+    : scenarioIntent.decodedArgs;
+
+  return {
+    ...scenarioIntent,
+    functionSignature: apiIntent.decodedFunction,
+    selector: apiIntent.selector ?? scenarioIntent.selector,
+    decodedArgs: decodedArgs?.length ? decodedArgs : scenarioIntent.decodedArgs,
+  };
+}
+
 export function buildPreflightResponse(
   api: {
     requestId: string;
@@ -86,20 +129,18 @@ export function buildPreflightResponse(
     onChainPolicyHash?: string;
     policyMode?: string;
     latencyMs?: number;
-    intent?: {
-      decodedFunction?: string;
-      decodedArgs?: Record<string, unknown>;
-    };
+    intent?: ApiIntentSlice;
   },
   scenarioIntent: TxIntent,
   ai?: AiAnalysis
 ): PreflightResponse {
+  const intent = mapIntentFromApi(scenarioIntent, api.intent);
   return {
     requestId: api.requestId,
     verdict: api.verdict,
     reasonCode: api.reasonCode,
     reason: reasonFor(api.reasonCode),
-    intent: scenarioIntent,
+    intent,
     checks: signalsToChecks(api.signals, api.verdict, api.reasonCode),
     adapters: api.signals.map(mapAdapterSignal),
     ai,
@@ -147,7 +188,23 @@ export async function pollAiAnalysis(
   return undefined;
 }
 
+function auditDecodedArgs(
+  decodedArgs?: Record<string, unknown>
+): TxIntent["decodedArgs"] {
+  if (!decodedArgs) return undefined;
+  return Object.entries(decodedArgs).map(([name, value]) => ({
+    name,
+    type: "unknown",
+    value: formatArgValue(value),
+  }));
+}
+
 export function mapAuditEventToUi(evt: AuditEvent) {
+  const calldata =
+    evt.calldataPreview && evt.calldataPreview.startsWith("0x")
+      ? evt.calldataPreview.replace(/…$/, "")
+      : "0x";
+
   return {
     id: evt.id,
     requestId: evt.requestId,
@@ -159,8 +216,10 @@ export function mapAuditEventToUi(evt: AuditEvent) {
       from: evt.fromAddress ?? "",
       to: evt.toAddress ?? "",
       value: evt.valueWei,
-      data: "0x",
+      data: calldata.length >= 10 ? calldata : "0x",
       selector: evt.selector ?? "0x",
+      functionSignature: evt.decodedFunction,
+      decodedArgs: auditDecodedArgs(evt.decodedArgs),
       chainId: evt.chainId,
     },
     adapters: evt.signals.map(mapAdapterSignal),

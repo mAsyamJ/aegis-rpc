@@ -2,7 +2,14 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+test = "test"
+script = "script"
 solc_version = "0.8.24"
+fs_permissions = [{ access = "read-write", path = "./deployments" }]
 
 [rpc_endpoints]
 base_sepolia = "${BASE_SEPOLIA_RPC_URL}"
+
+[etherscan]
+# Multichain Etherscan API V2 (Base Sepolia chainId 84532). Key from https://etherscan.io/apidashboard
+base_sepolia = { key = "${ETHERSCAN_API_KEY}", url = "https://api.etherscan.io/v2/api?chainid=84532" }

@@ -1,7 +1,14 @@
 import type { DemoScenario } from "@/lib/types/aegis";
+import {
+  DEFI_CHECK_SWAP_DEVIATION_DATA,
+  DEFI_POLICY_APP,
+  DEMO_ERC20,
+  DEMO_SPENDER,
+  WALLET_UNLIMITED_APPROVE_DATA,
+} from "./liveCalldata";
 
 const AGENT = "0xA9e15A7d2c0B7F0EaF94c2De27B5C7e1aaF50001";
-const SPENDER_BAD = "0xDEadBee5deAdBeEFdEadbeEFDeAdBEefDeAdbeef";
+const SPENDER_BAD = DEMO_SPENDER;
 const SPENDER_OK = "0xAE61B5C3b6e9210Aa12345678Aef0c11B0A0Ab00";
 const USDC = "0x036CbD53842c5426634e7929541eC2318f3dCF7e"; // Base Sepolia USDC
 const FEED_ETH_USD = "0x4aDC67696bA383F43DD60A9e78F2C97Fbbfc7cb1";
@@ -76,7 +83,7 @@ export const demoScenarios: DemoScenario[] = [
   {
     id: "agent-over-cap",
     audience: "agent",
-    title: "Agent exceeds USD policy cap",
+    title: "$5K Agent Swap",
     summary:
       "Agent attempts a 4,800 USDC transfer; policy cap per-tx is 500 USDC.",
     expectedVerdict: "BLOCK",
@@ -289,10 +296,10 @@ export const demoScenarios: DemoScenario[] = [
     latencyMs: 287,
     intent: {
       from: "0x1234567890aBCdef1234567890abcDEf12345678",
-      to: USDC,
+      to: DEMO_ERC20,
       value: "0",
       valueUsd: 0,
-      data: "0x095ea7b3000000000000000000000000deadbee5deadbeefdeadbeefdeadbeefdeadbeefffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      data: WALLET_UNLIMITED_APPROVE_DATA,
       selector: "0x095ea7b3",
       functionSignature: "approve(address,uint256)",
       decodedArgs: [
@@ -349,6 +356,52 @@ export const demoScenarios: DemoScenario[] = [
       suggestion:
         "If interaction is genuinely needed, approve only the exact amount required for one transaction.",
       confidence: 0.99,
+      model: "aegis-explain-v1",
+    },
+  },
+  {
+    id: "defi-check-swap-deviation",
+    audience: "defi",
+    title: "DeFi swap deviation check (indexed)",
+    summary:
+      "Call checkSwapDeviation on deployed DeFiUseCasePolicyApp — ABI indexer decodes function name.",
+    expectedVerdict: "SAFE",
+    expectedReasonCode: "POLICY_OK",
+    policyHash: "0x71b2…fe04",
+    policyMode: "enforce",
+    latencyMs: 220,
+    intent: {
+      from: AGENT,
+      to: DEFI_POLICY_APP,
+      value: "0",
+      valueUsd: 0,
+      data: DEFI_CHECK_SWAP_DEVIATION_DATA,
+      selector: "0x02d23590",
+      functionSignature: "checkSwapDeviation(address,address,uint256,uint256,uint256,uint256)",
+      decodedArgs: [
+        { name: "tokenIn", type: "address", value: "0x1111…1111" },
+        { name: "tokenOut", type: "address", value: "0x2222…2222" },
+      ],
+      chainId: 84532,
+      nonce: 50,
+    },
+    adapters: [
+      {
+        adapter: "PreviewEnrichmentAdapter",
+        status: "OK",
+        label: "DeFiUseCasePolicyApp: checkSwapDeviation",
+        latencyMs: 8,
+        data: { contractName: "DeFiUseCasePolicyApp", indexed: true },
+      },
+    ],
+    checks: [
+      { id: "verdict", name: "Policy engine", status: "OK", detail: "Policy checks passed" },
+    ],
+    ai: {
+      summary: "Indexed contract call decoded via committed ABI index.",
+      risks: [],
+      suggestion: "Safe to broadcast under wallet policy.",
+      confidence: 0.9,
       model: "aegis-explain-v1",
     },
   },

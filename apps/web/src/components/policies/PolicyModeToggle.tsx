@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import type { PolicyMode } from "@/lib/types/aegis";
 import { cn } from "@/lib/utils";
-import { setPolicyMode } from "@/lib/client/aegisApi";
-import { useState } from "react";
+import { setPolicyMode as setPolicyModeApi } from "@/lib/client/aegisApi";
+import { useAppStatus } from "@/components/layout/AppStatusProvider";
 
 const MODES: PolicyMode[] = ["enforce", "warn", "observe"];
 
@@ -18,15 +19,16 @@ export function PolicyModeToggle({
   onChange?: (mode: PolicyMode) => void;
   className?: string;
 }) {
-  const [current, setCurrent] = useState(mode);
+  const { setPolicyMode: setGlobalMode, setActivePolicyId } = useAppStatus();
   const [busy, setBusy] = useState(false);
 
   async function pick(next: PolicyMode) {
-    if (next === current || busy) return;
+    if (next === mode || busy) return;
     setBusy(true);
     try {
-      await setPolicyMode(policyId, next);
-      setCurrent(next);
+      await setPolicyModeApi(policyId, next);
+      setGlobalMode(next);
+      setActivePolicyId(policyId);
       onChange?.(next);
     } finally {
       setBusy(false);
@@ -47,7 +49,7 @@ export function PolicyModeToggle({
             onClick={() => pick(m)}
             className={cn(
               "rounded-md border px-2.5 py-1 text-xs font-medium capitalize transition-colors",
-              current === m
+              mode === m
                 ? "border-aegis/50 bg-aegis/15 text-aegis"
                 : "border-border bg-background/40 text-muted-foreground hover:text-foreground"
             )}

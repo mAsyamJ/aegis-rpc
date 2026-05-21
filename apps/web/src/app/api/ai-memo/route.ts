@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getEventByRequestId } from "@/lib/db/eventStore";
+import { getEventByRequestId } from "@/lib/db/eventRepository";
 import { getMemoForRequest, templateMemo } from "@/lib/ai/memoGenerator";
 
 export async function POST(req: Request) {
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "requestId required" }, { status: 400 });
   }
 
-  const event = getEventByRequestId(body.requestId);
+  const event = await getEventByRequestId(body.requestId);
   if (!event) {
     return NextResponse.json({ error: "Event not found" }, { status: 404 });
   }

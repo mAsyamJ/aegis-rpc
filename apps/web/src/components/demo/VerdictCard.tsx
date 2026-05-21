@@ -1,8 +1,9 @@
-import type { PreflightResponse } from "@/lib/types/aegis";
+import type { MemoStatus, PreflightResponse } from "@/lib/types/aegis";
 import { VerdictBadge } from "@/components/status/VerdictBadge";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, ShieldX, ShieldAlert } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { ShieldCheck, ShieldX, ShieldAlert, RotateCcw } from "lucide-react";
 import { formatMs } from "@/lib/utils/format";
 
 const copy = {
@@ -16,14 +17,18 @@ const Icon = { SAFE: ShieldCheck, WARN: ShieldAlert, BLOCK: ShieldX };
 export function VerdictCard({
   response,
   loading,
+  memoStatus,
   onSafeSend,
   onWarnOverride,
+  onReset,
   className,
 }: {
   response?: PreflightResponse;
   loading?: boolean;
+  memoStatus?: MemoStatus;
   onSafeSend?: () => void;
   onWarnOverride?: () => void;
+  onReset?: () => void;
   className?: string;
 }) {
   const verdict = response?.verdict;
@@ -38,8 +43,12 @@ export function VerdictCard({
           ? "border-block/40 bg-block/5"
           : "border-border bg-surface";
 
+  const failedChecks =
+    response?.checks.filter((c) => c.status === "BLOCK" || c.status === "WARN") ?? [];
+
   return (
-    <div className={cn("rounded-xl border p-4", tone, className)}>
+    <Card className={cn(tone, className)}>
+      <CardContent className="pt-6">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <div
@@ -72,24 +81,43 @@ export function VerdictCard({
         {verdict ? copy[verdict] : "Awaiting preflight…"}
       </p>
 
+      {failedChecks.length > 0 && (
+        <ul className="mt-3 space-y-1.5">
+          {failedChecks.map((c) => (
+            <li
+              key={c.id}
+              className={cn(
+                "rounded-md border px-2.5 py-1.5 text-[11px]",
+                c.status === "BLOCK"
+                  ? "border-block/30 bg-block/10 text-foreground"
+                  : "border-warn/30 bg-warn/10 text-foreground",
+              )}
+            >
+              <span className="font-medium">{c.name}</span>
+              {c.detail ? (
+                <span className="text-muted-foreground"> — {c.detail}</span>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {memoStatus === "generating" && response && (
+        <p className="mt-2 animate-pulse text-xs text-muted-foreground">
+          AI memo generating…
+        </p>
+      )}
+
+      {response?.ai?.summary && memoStatus === "ready" && (
+        <p className="mt-2 line-clamp-3 text-xs text-muted-foreground">
+          {response.ai.summary}
+        </p>
+      )}
+
       {response && (
         <div className="mt-3 grid gap-2 text-xs">
           <KV k="reasonCode" v={response.reasonCode} mono />
-          <KV k="policyHash" v={response.policyHash} mono />
           <KV k="requestId" v={response.requestId} mono />
-          <KV
-            k="broadcasted"
-            v={
-              <span
-                className={cn(
-                  "font-mono",
-                  response.broadcasted ? "text-safe" : "text-muted-foreground",
-                )}
-              >
-                {String(response.broadcasted)}
-              </span>
-            }
-          />
         </div>
       )}
 
@@ -105,19 +133,14 @@ export function VerdictCard({
             </Button>
           )}
           {verdict === "WARN" && (
-            <>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={onWarnOverride}
-                className="border-warn/40 text-warn hover:bg-warn/10"
-              >
-                Override with reason
-              </Button>
-              <Button size="sm" variant="ghost">
-                Cancel
-              </Button>
-            </>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onWarnOverride}
+              className="border-warn/40 text-warn hover:bg-warn/10"
+            >
+              Override with reason
+            </Button>
           )}
           {verdict === "BLOCK" && (
             <Button
@@ -128,9 +151,20 @@ export function VerdictCard({
               Broadcast disabled — blocked
             </Button>
           )}
+          {onReset ? (
+            <Button size="sm" variant="ghost" onClick={onReset}>
+              <RotateCcw className="mr-1 h-3.5 w-3.5" />
+              Reset
+            </Button>
+          ) : null}
         </div>
       )}
-    </div>
+
+      <p className="mt-3 text-[10px] text-muted-foreground">
+        AI assists only — deterministic policy decides the verdict.
+      </p>
+      </CardContent>
+    </Card>
   );
 }
 
