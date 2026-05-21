@@ -24,7 +24,7 @@ Aegis is a JSON-RPC-shaped gateway and preflight API for wallets, agents, keeper
 
 | Use | URL |
 |-----|-----|
-| **JSON-RPC** (wallet / `cast` / agents) | `https://web-gamma-bay-96.vercel.app/api/rpc` or `http://127.0.0.1:3020/api/rpc` |
+| **JSON-RPC** (wallet / `cast` / agents) | https://web-gamma-bay-96.vercel.app/api/rpc or http://127.0.0.1:3020/api/rpc |
 | **Preflight** | `…/api/preflight` |
 | **Audit log** | `…/api/events` |
 | **Health** | `…/api/health` |
